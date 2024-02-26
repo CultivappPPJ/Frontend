@@ -9,13 +9,14 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
 import { ChangeEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SignUpData } from "../../types";
 import axios from "axios";
 import { enqueueSnackbar } from "notistack";
 
 export default function SignUp() {
   const { control, handleSubmit } = useForm<SignUpData>();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +35,7 @@ export default function SignUp() {
         setLoading(false);
         console.log(response.data);
         enqueueSnackbar("Registration Successful!", { variant: "success" });
-        // TODO: Redirect to the user dashboard, similar a cómo se maneja en el ejemplo de signIn
+        navigate("/");
       })
       .catch((error) => {
         setLoading(false);

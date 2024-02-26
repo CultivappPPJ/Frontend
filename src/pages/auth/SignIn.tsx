@@ -6,7 +6,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
 import { SignInData } from "../../types";
@@ -16,6 +16,7 @@ import axios from "axios";
 
 export default function SignIn() {
   const { control, handleSubmit } = useForm<SignInData>();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { enqueueSnackbar } = useSnackbar();
@@ -35,7 +36,7 @@ export default function SignIn() {
         setLoading(false);
         enqueueSnackbar("Success!", { variant: "success" });
         console.log(response.data);
-        // TODO: Redirect to the user dashboard
+        navigate("/");
       })
       .catch((error) => {
         setLoading(false);
