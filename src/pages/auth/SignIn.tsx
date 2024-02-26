@@ -9,46 +9,48 @@ import {
 import { Link } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
-import { SignInData, SignInResponse } from "../../types";
+import { SignInData } from "../../types";
 import { useState } from "react";
+import { useSnackbar } from "notistack";
+import axios from "axios";
 
 export default function SignIn() {
   const { control, handleSubmit } = useForm<SignInData>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const onSubmit = (data: SignInData) => {
-    fetch(import.meta.env.VITE_SIGNIN, {
-      method: "POST",
+    setLoading(true);
+
+    axios({
+      method: "post",
+      url: import.meta.env.VITE_SIGNIN,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      data: data,
     })
-      .then(async (response) => {
+      .then((response) => {
         setLoading(false);
-        const responseData = await response.json();
-        if (!response.ok) {
-          switch (responseData.errorCode) {
-            case "EMAIL_NOT_FOUND":
-              setError("Email is not registered.");
-              break;
-            case "INVALID_CREDENTIALS":
-              setError("Credentials are incorrect.");
-              break;
-            default:
-              setError("Authentication error.");
-          }
-        }
-        return responseData;
-      })
-      .then((data: SignInResponse) => {
-        console.log(data);
+        enqueueSnackbar("Success!", { variant: "success" });
+        console.log(response.data);
         // TODO: Redirect to the user dashboard
       })
-      .catch((error: Error) => {
-        console.error("Error:", error.message);
-        setError(error.message);
+      .catch((error) => {
+        setLoading(false);
+        //Mensaje de error predeterminado
+        let errorMsg = "An error occurred. Please try again.";
+        if (error.response) {
+          errorMsg = error.response.data.error;
+        } else if (error.request) {
+          console.log(error.request);
+        } else {
+          console.log("Error", error.message);
+        }
+
+        setError(errorMsg);
+        enqueueSnackbar(errorMsg, { variant: "error" });
       });
   };
 
@@ -137,7 +139,7 @@ export default function SignIn() {
             Sign In
           </Button>
           {error && (
-            <Typography component={"p"} sx={{ color: "red" }}>
+            <Typography component={"p"} sx={{ color: "red", pb: "1rem" }}>
               {error}
             </Typography>
           )}

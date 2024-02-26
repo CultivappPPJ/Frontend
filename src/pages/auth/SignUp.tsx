@@ -10,7 +10,9 @@ import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
 import { ChangeEvent, useState } from "react";
 import { Link } from "react-router-dom";
-import { SignUpData, SignUpResponse } from "../../types";
+import { SignUpData } from "../../types";
+import axios from "axios";
+import { enqueueSnackbar } from "notistack";
 
 export default function SignUp() {
   const { control, handleSubmit } = useForm<SignUpData>();
@@ -18,29 +20,39 @@ export default function SignUp() {
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = (data: SignUpData) => {
-    fetch(import.meta.env.VITE_SIGNUP, {
-      method: "POST",
+    setLoading(true);
+
+    axios({
+      method: "post",
+      url: import.meta.env.VITE_SIGNUP,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      data: data,
     })
-      .then(async (response) => {
+      .then((response) => {
         setLoading(false);
-        const responseData = await response.json();
-        if (!response.ok) {
-          console.log(responseData);
-          setError(responseData.error);
+        console.log(response.data);
+        enqueueSnackbar("Registration Successful!", { variant: "success" });
+        // TODO: Redirect to the user dashboard, similar a cómo se maneja en el ejemplo de signIn
+      })
+      .catch((error) => {
+        setLoading(false);
+        let errorMsg = "An error occurred. Please try again.";
+        if (error.response) {
+          console.log(error.response.data);
+          errorMsg = error.response.data.error
+            ? error.response.data.error
+            : errorMsg;
+        } else if (error.request) {
+          // La solicitud fue hecha pero no se recibió respuesta
+          console.log(error.request);
+        } else {
+          // Algo ocurrió en la configuración de la solicitud que causó un error
+          console.log("Error", error.message);
         }
-        return responseData;
-      })
-      .then((data: SignUpResponse) => {
-        console.log(data);
-        // TODO: Redirect to the user dashboard
-      })
-      .catch((error: Error) => {
-        console.error("Error:", error.message);
-        setError(error.message);
+        setError(errorMsg);
+        enqueueSnackbar(errorMsg, { variant: "error" });
       });
   };
 
@@ -146,7 +158,7 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12}>
               <Controller
-                name="phone"
+                name="phoneNumber"
                 control={control}
                 defaultValue=""
                 rules={{
@@ -237,7 +249,7 @@ export default function SignUp() {
             Sign Up
           </Button>
           {error && (
-            <Typography component={"p"} sx={{ color: "red" }}>
+            <Typography component={"p"} sx={{ color: "red", pb: "1rem" }}>
               {error}
             </Typography>
           )}
