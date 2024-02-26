@@ -8,15 +8,40 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { Link } from "react-router-dom";
+import { SignUpData, SignUpResponse } from "../../types";
 
 export default function SignUp() {
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit } = useForm<SignUpData>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = () => {
-    //TODO: Hacer el Post al backend
-    console.log("envio de datos!");
+  const onSubmit = (data: SignUpData) => {
+    fetch(import.meta.env.VITE_SIGNUP, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then(async (response) => {
+        setLoading(false);
+        const responseData = await response.json();
+        if (!response.ok) {
+          console.log(responseData);
+          setError(responseData.error);
+        }
+        return responseData;
+      })
+      .then((data: SignUpResponse) => {
+        console.log(data);
+        // TODO: Redirect to the user dashboard
+      })
+      .catch((error: Error) => {
+        console.error("Error:", error.message);
+        setError(error.message);
+      });
   };
 
   const handleLettersInput =
@@ -207,9 +232,15 @@ export default function SignUp() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
             Sign Up
           </Button>
+          {error && (
+            <Typography component={"p"} sx={{ color: "red" }}>
+              {error}
+            </Typography>
+          )}
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Link to="/signin">Already have an account? Sign in</Link>

@@ -9,13 +9,47 @@ import {
 import { Link } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
+import { SignInData, SignInResponse } from "../../types";
+import { useState } from "react";
 
 export default function SignIn() {
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit } = useForm<SignInData>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = () => {
-    //TODO: Hacer el Post al backend
-    console.log("envio de datos!");
+  const onSubmit = (data: SignInData) => {
+    fetch(import.meta.env.VITE_SIGNIN, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then(async (response) => {
+        setLoading(false);
+        const responseData = await response.json();
+        if (!response.ok) {
+          switch (responseData.errorCode) {
+            case "EMAIL_NOT_FOUND":
+              setError("Email is not registered.");
+              break;
+            case "INVALID_CREDENTIALS":
+              setError("Credentials are incorrect.");
+              break;
+            default:
+              setError("Authentication error.");
+          }
+        }
+        return responseData;
+      })
+      .then((data: SignInResponse) => {
+        console.log(data);
+        // TODO: Redirect to the user dashboard
+      })
+      .catch((error: Error) => {
+        console.error("Error:", error.message);
+        setError(error.message);
+      });
   };
 
   return (
@@ -98,9 +132,15 @@ export default function SignIn() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
             Sign In
           </Button>
+          {error && (
+            <Typography component={"p"} sx={{ color: "red" }}>
+              {error}
+            </Typography>
+          )}
           <Grid container>
             <Grid item>
               <Link to="/signup">{"Don't have an account? Sign Up"}</Link>
