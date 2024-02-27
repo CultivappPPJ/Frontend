@@ -232,9 +232,12 @@ export default function SignUp() {
               {authError}
             </Typography>
           )}
-          <Grid container justifyContent="flex-end">
+          <Grid container justifyContent="flex-end" spacing={2}>
             <Grid item>
               <Link to="/signin">Already have an account? Sign in</Link>
+            </Grid>
+            <Grid item>
+              <Link to="/">{"Back to Home"}</Link>
             </Grid>
           </Grid>
         </Box>

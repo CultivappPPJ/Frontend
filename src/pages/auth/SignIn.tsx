@@ -125,9 +125,12 @@ export default function SignIn() {
               {authError}
             </Typography>
           )}
-          <Grid container>
+          <Grid container justifyContent="flex-end" spacing={2}>
             <Grid item>
               <Link to="/signup">{"Don't have an account? Sign Up"}</Link>
+            </Grid>
+            <Grid item>
+              <Link to="/">{"Back to Home"}</Link>
             </Grid>
           </Grid>
         </Box>
