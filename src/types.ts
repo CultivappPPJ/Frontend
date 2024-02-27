@@ -18,4 +18,14 @@ export interface SignUpData {
 export interface SignUpResponse {
     token: string;
 }
+
+export interface BackendError {
+    message: string;
+}
+
+export interface AuthState {
+    token: string | null;
+    status: 'idle' | 'loading' | 'failed';
+    error: string | null | undefined;
+}
   
