@@ -8,53 +8,25 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SignUpData } from "../../types";
-import axios from "axios";
-import { enqueueSnackbar } from "notistack";
+import { useDispatch, useSelector } from "react-redux";
+import { signUp } from "../../features/auth/authSlice";
+import { AppDispatch, RootState } from "../../store";
 
 export default function SignUp() {
   const { control, handleSubmit } = useForm<SignUpData>();
+  const dispatch: AppDispatch = useDispatch();
+  const {
+    token,
+    status,
+    error: authError,
+  } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = (data: SignUpData) => {
-    setLoading(true);
-
-    axios({
-      method: "post",
-      url: import.meta.env.VITE_SIGNUP,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    })
-      .then((response) => {
-        setLoading(false);
-        console.log(response.data);
-        enqueueSnackbar("Registration Successful!", { variant: "success" });
-        navigate("/");
-      })
-      .catch((error) => {
-        setLoading(false);
-        let errorMsg = "An error occurred. Please try again.";
-        if (error.response) {
-          console.log(error.response.data);
-          errorMsg = error.response.data.error
-            ? error.response.data.error
-            : errorMsg;
-        } else if (error.request) {
-          // La solicitud fue hecha pero no se recibió respuesta
-          console.log(error.request);
-        } else {
-          // Algo ocurrió en la configuración de la solicitud que causó un error
-          console.log("Error", error.message);
-        }
-        setError(errorMsg);
-        enqueueSnackbar(errorMsg, { variant: "error" });
-      });
+    dispatch(signUp(data));
   };
 
   const handleLettersInput =
@@ -65,6 +37,12 @@ export default function SignUp() {
         onChange(onlyLetters);
       }
     };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   return (
     <Container
@@ -245,13 +223,13 @@ export default function SignUp() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={loading}
+            disabled={status === "loading"}
           >
-            Sign Up
+            {status === "loading" ? "Signing Up..." : "Sign Up"}
           </Button>
-          {error && (
+          {authError && (
             <Typography component={"p"} sx={{ color: "red", pb: "1rem" }}>
-              {error}
+              {authError}
             </Typography>
           )}
           <Grid container justifyContent="flex-end">

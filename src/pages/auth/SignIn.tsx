@@ -10,50 +10,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
 import { SignInData } from "../../types";
-import { useState } from "react";
-import { useSnackbar } from "notistack";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { signIn } from "../../features/auth/authSlice";
+import { RootState, AppDispatch } from "../../store";
+import { useEffect } from "react";
 
 export default function SignIn() {
   const { control, handleSubmit } = useForm<SignInData>();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { enqueueSnackbar } = useSnackbar();
+  const dispatch: AppDispatch = useDispatch();
+
+  const {
+    token,
+    status,
+    error: authError,
+  } = useSelector((state: RootState) => state.auth);
 
   const onSubmit = (data: SignInData) => {
-    setLoading(true);
-
-    axios({
-      method: "post",
-      url: import.meta.env.VITE_SIGNIN,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    })
-      .then((response) => {
-        setLoading(false);
-        enqueueSnackbar("Success!", { variant: "success" });
-        console.log(response.data);
-        navigate("/");
-      })
-      .catch((error) => {
-        setLoading(false);
-        //Mensaje de error predeterminado
-        let errorMsg = "An error occurred. Please try again.";
-        if (error.response) {
-          errorMsg = error.response.data.error;
-        } else if (error.request) {
-          console.log(error.request);
-        } else {
-          console.log("Error", error.message);
-        }
-
-        setError(errorMsg);
-        enqueueSnackbar(errorMsg, { variant: "error" });
-      });
+    dispatch(signIn(data));
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   return (
     <Container
@@ -135,13 +116,13 @@ export default function SignIn() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={loading}
+            disabled={status === "loading"}
           >
-            Sign In
+            {status === "loading" ? "Signing In..." : "Sign In"}
           </Button>
-          {error && (
+          {authError && (
             <Typography component={"p"} sx={{ color: "red", pb: "1rem" }}>
-              {error}
+              {authError}
             </Typography>
           )}
           <Grid container>
