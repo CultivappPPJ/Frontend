@@ -28,4 +28,8 @@ export interface AuthState {
     status: 'idle' | 'loading' | 'failed';
     error: string | null | undefined;
 }
+
+export interface TokenPayload {
+    sub: string;
+}
   
