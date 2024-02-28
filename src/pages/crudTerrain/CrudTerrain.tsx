@@ -1,28 +1,36 @@
 import React, { useState } from 'react';
 import { Button, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, TextField } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
+import { Terrain } from '../../types';
 
-const CenteredTableCell = (props) => (
+const CenteredTableCell: React.FC<React.HTMLAttributes<HTMLTableCellElement>> = (props) => (
   <TableCell {...props} sx={{ textAlign: 'center' }} />
 );
 
 export default function CrudTerrain() {
-  const [terrains, setTerrains] = useState([]);
-  const [newTerrain, setNewTerrain] = useState({ name: '', area: '', soilType: '' });
-  const [selectedSquares, setSelectedSquares] = useState(new Set());
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [terrains, setTerrains] = useState<Terrain[]>([]);
+  const [newTerrain, setNewTerrain] = useState<Terrain>({ name: '', area: '', soilType: '' });
+  const [selectedSquares, setSelectedSquares] = useState<Set<number>>(new Set());
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
+  
     // Validar que el valor en el campo de área no sea negativo
     if (name === 'area' && parseFloat(value) < 0) {
       return; // No actualizamos el estado si el valor es negativo
     }
-
-    setNewTerrain({ ...newTerrain, [name]: value });
+  
+    setNewTerrain((prevTerrain) => ({ ...prevTerrain, [name]: value }));
   };
+  
+  const handleSoilTypeChange = (event: SelectChangeEvent<string>) => {
+    const value = event.target.value;
+    setNewTerrain((prevTerrain) => ({ ...prevTerrain, soilType: value }));
+  };
+  
 
-  const handleSquareClick = (index) => {
+  const handleSquareClick = (index: number) => {
     const updatedSelection = new Set(selectedSquares);
 
     if (updatedSelection.has(index)) {
@@ -55,7 +63,7 @@ export default function CrudTerrain() {
     setSelectedSquares(new Set()); // Desmarcar todos los cuadrados seleccionados
   };
 
-  const handleDeleteTerrain = (index) => {
+  const handleDeleteTerrain = (index: number) => {
     const updatedTerrains = [...terrains];
     updatedTerrains.splice(index, 1);
     setTerrains(updatedTerrains);
@@ -63,7 +71,7 @@ export default function CrudTerrain() {
     setSelectedSquares(new Set()); // Desmarcar todos los cuadrados seleccionados
   };
 
-  const handleEditTerrain = (index) => {
+  const handleEditTerrain = (index: number) => {
     // Activar la edición y cargar los datos del terreno a editar
     setEditingIndex(index);
     setNewTerrain(terrains[index]);
@@ -75,8 +83,8 @@ export default function CrudTerrain() {
     console.log('Terrains to save:', terrains);
   };
 
-  const generateVisualGrid = (area, selectedSquares, handleSquareClick) => {
-    const squares = Array.from({ length: area }, (_, index) => (
+  const generateVisualGrid = (area: string, selectedSquares: Set<number>, handleSquareClick: (index: number) => void) => {
+    const squares = Array.from({ length: parseFloat(area) }, (_, index) => (
       <Grid item key={index}>
         <div
           onClick={() => handleSquareClick(index)}
@@ -89,13 +97,14 @@ export default function CrudTerrain() {
         />
       </Grid>
     ));
-
+  
     return (
       <Grid container spacing={1}>
         {squares}
       </Grid>
     );
   };
+  
 
   return (
     <div
@@ -130,7 +139,7 @@ export default function CrudTerrain() {
           label="Tipo de Suelo"
           name="soilType"
           value={newTerrain.soilType}
-          onChange={handleInputChange}
+          onChange={(e) => handleSoilTypeChange(e)}
           sx={{ minWidth: '120px', marginRight: '8px' }}
         >
           <MenuItem value="Arenoso">Arenoso</MenuItem>
@@ -139,6 +148,7 @@ export default function CrudTerrain() {
           <MenuItem value="Calizo">Calizo</MenuItem>
           <MenuItem value="Supresivo">Supresivo</MenuItem>
         </Select>
+
         <Button variant="contained" onClick={handleAddTerrain} style={{ marginLeft: '8px' }}>
           {editingIndex !== null ? 'Modificar Terreno' : 'Agregar Terreno'}
         </Button>

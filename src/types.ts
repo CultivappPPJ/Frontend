@@ -19,3 +19,8 @@ export interface SignUpResponse {
     token: string;
 }
   
+export interface Terrain {
+    name: string;
+    area: string;
+    soilType: string;
+  }
