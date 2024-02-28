@@ -1,30 +1,22 @@
-# React + TypeScript + Vite
+# Cultivaap
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas.
 
-Currently, two official plugins are available:
+## Prerrequisitos
+Node >= 20.11.0
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Instalación
+Clonar el repositorio: https://github.com/CultivappPPJ/Frontend.git
 
-## Expanding the ESLint configuration
+Instalar dependencias del proyecto:
+1. cd frontend
+2. En este caso José debe cambiarse a la rama develop
+3. npm install
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Ejecutar el proyecto:
+npm run dev
+Ahora puedes abrir tu navegador y acceder a http://localhost:5173 para ver tu aplicación en ejecución.
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Construido con
+- Vite - El entorno de desarrollo utilizado
+- React
