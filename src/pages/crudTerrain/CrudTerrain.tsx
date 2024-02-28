@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid } from '@mui/material';
+import { Button, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid, TextField } from '@mui/material';
 
 const CenteredTableCell = (props) => (
   <TableCell {...props} sx={{ textAlign: 'center' }} />
@@ -7,12 +7,18 @@ const CenteredTableCell = (props) => (
 
 export default function CrudTerrain() {
   const [terrains, setTerrains] = useState([]);
-  const [newTerrain, setNewTerrain] = useState({ name: '', area: '' });
+  const [newTerrain, setNewTerrain] = useState({ name: '', area: '', soilType: '' });
   const [selectedSquares, setSelectedSquares] = useState(new Set());
   const [editingIndex, setEditingIndex] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Validar que el valor en el campo de área no sea negativo
+    if (name === 'area' && parseFloat(value) < 0) {
+      return; // No actualizamos el estado si el valor es negativo
+    }
+
     setNewTerrain({ ...newTerrain, [name]: value });
   };
 
@@ -29,6 +35,12 @@ export default function CrudTerrain() {
   };
 
   const handleAddTerrain = () => {
+    // Validar que los campos requeridos no estén vacíos y el área no sea negativa
+    if (!newTerrain.name || !newTerrain.area || parseFloat(newTerrain.area) < 0 || !newTerrain.soilType) {
+      alert('Por favor, completa todos los campos correctamente.');
+      return;
+    }
+
     if (editingIndex !== null) {
       // Modificar terreno existente
       const updatedTerrains = [...terrains];
@@ -39,7 +51,7 @@ export default function CrudTerrain() {
       // Agregar nuevo terreno
       setTerrains([...terrains, newTerrain]);
     }
-    setNewTerrain({ name: '', area: '' }); // Reiniciar el área después de agregar/modificar un terreno
+    setNewTerrain({ name: '', area: '', soilType: '' }); // Reiniciar los campos después de agregar/modificar un terreno
     setSelectedSquares(new Set()); // Desmarcar todos los cuadrados seleccionados
   };
 
@@ -77,15 +89,13 @@ export default function CrudTerrain() {
         />
       </Grid>
     ));
-  
+
     return (
       <Grid container spacing={1}>
         {squares}
       </Grid>
     );
   };
-  
-  
 
   return (
     <div
@@ -99,7 +109,6 @@ export default function CrudTerrain() {
       }}
     >
       <h2 style={{ color: 'white', textShadow: '2px 2px 2px black' }}>Selección de Terrenos</h2>
-
 
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', marginTop: '8px' }}>
         <TextField
@@ -115,7 +124,21 @@ export default function CrudTerrain() {
           type="number"
           value={newTerrain.area}
           onChange={handleInputChange}
+          sx={{ marginRight: '8px' }}
         />
+        <Select
+          label="Tipo de Suelo"
+          name="soilType"
+          value={newTerrain.soilType}
+          onChange={handleInputChange}
+          sx={{ minWidth: '120px', marginRight: '8px' }}
+        >
+          <MenuItem value="Arenoso">Arenoso</MenuItem>
+          <MenuItem value="Mixto">Mixto</MenuItem>
+          <MenuItem value="Ácido">Ácido</MenuItem>
+          <MenuItem value="Calizo">Calizo</MenuItem>
+          <MenuItem value="Supresivo">Supresivo</MenuItem>
+        </Select>
         <Button variant="contained" onClick={handleAddTerrain} style={{ marginLeft: '8px' }}>
           {editingIndex !== null ? 'Modificar Terreno' : 'Agregar Terreno'}
         </Button>
@@ -127,6 +150,7 @@ export default function CrudTerrain() {
             <TableRow>
               <CenteredTableCell>Nombre</CenteredTableCell>
               <CenteredTableCell>Área</CenteredTableCell>
+              <CenteredTableCell>Tipo de Suelo</CenteredTableCell>
               <CenteredTableCell>Representación Visual</CenteredTableCell>
               <CenteredTableCell>Acciones</CenteredTableCell>
             </TableRow>
@@ -136,6 +160,7 @@ export default function CrudTerrain() {
               <TableRow key={index}>
                 <CenteredTableCell>{terrain.name}</CenteredTableCell>
                 <CenteredTableCell>{terrain.area}</CenteredTableCell>
+                <CenteredTableCell>{terrain.soilType}</CenteredTableCell>
                 <CenteredTableCell>
                   {generateVisualGrid(terrain.area, selectedSquares, (squareIndex) => handleSquareClick(squareIndex))}
                 </CenteredTableCell>
