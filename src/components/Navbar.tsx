@@ -19,8 +19,8 @@ import {
   Typography,
 } from "@mui/material";
 
-const pages = ["My Terrains", "ah"];
-const settings = ["Account", "Logout"];
+const pages = [{ title: "Agregar Terreno", path: "/crud" }];
+const settings = ["Cerrar Sesión"];
 
 function Navbar() {
   const [userEmail, setUserEmail] = React.useState<string | null>(null);
@@ -122,8 +122,14 @@ function Navbar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.title} onClick={handleCloseNavMenu}>
+                  <Button
+                    component={Link}
+                    to={page.path}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <Typography textAlign="center">{page.title}</Typography>
+                  </Button>
                 </MenuItem>
               ))}
             </Menu>
@@ -156,11 +162,13 @@ function Navbar() {
               >
                 {pages.map((page) => (
                   <Button
-                    key={page}
+                    key={page.title}
                     onClick={handleCloseNavMenu}
                     sx={{ my: 2, color: "white", display: "block" }}
+                    component={Link}
+                    to={page.path}
                   >
-                    {page}
+                    {page.title}
                   </Button>
                 ))}
               </Box>

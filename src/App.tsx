@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { setToken } from "./features/auth/authSlice";
+import CrudTerrain from "./pages/crudTerrain/CrudTerrain";
 
 function App() {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/crud" element={<CrudTerrain />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
