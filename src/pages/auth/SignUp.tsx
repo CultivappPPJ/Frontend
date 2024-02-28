@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   TextField,
@@ -39,10 +40,25 @@ export default function SignUp() {
     };
 
   useEffect(() => {
-    if (token) {
+    if (token && status !== "loading") {
       navigate("/");
     }
-  }, [token, navigate]);
+  }, [token, status, navigate]);
+
+  if (token && status !== "loading") {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container
@@ -61,7 +77,7 @@ export default function SignUp() {
         }}
       >
         <Typography component="h1" variant="h5">
-          Sign up
+          Crear Cuenta
         </Typography>
         <Box
           component="form"
@@ -76,10 +92,10 @@ export default function SignUp() {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "First name is required",
+                  required: "El nombre es requerido",
                   minLength: {
                     value: 3,
-                    message: "First name must be at least 3 characters",
+                    message: "El nombre debe tener al menos 3 caracteres.",
                   },
                 }}
                 render={({
@@ -89,7 +105,7 @@ export default function SignUp() {
                   <TextField
                     required
                     fullWidth
-                    label="First Name"
+                    label="Nombre"
                     autoComplete="given-name"
                     autoFocus
                     error={!!error}
@@ -109,10 +125,10 @@ export default function SignUp() {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "Last name is required",
+                  required: "El apellido es requerido",
                   minLength: {
                     value: 3,
-                    message: "Last name must be at least 3 characters",
+                    message: "El apellido debe tener al menos 3 caracteres.",
                   },
                 }}
                 render={({
@@ -122,7 +138,7 @@ export default function SignUp() {
                   <TextField
                     required
                     fullWidth
-                    label="Last Name"
+                    label="Apellido"
                     autoComplete="family-name"
                     error={!!error}
                     helperText={error ? error.message : ""}
@@ -141,8 +157,11 @@ export default function SignUp() {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "Phone number required",
-                  minLength: { value: 9, message: "Must be exactly 9 digits" },
+                  required: "El número de teléfono es requerido",
+                  minLength: {
+                    value: 9,
+                    message: "Debe tener exactamente 9 dígitos",
+                  },
                 }}
                 render={({
                   field: { onChange, value },
@@ -151,7 +170,7 @@ export default function SignUp() {
                   <TextField
                     required
                     fullWidth
-                    label="Phone Number"
+                    label="Número de teléfono"
                     autoComplete="tel"
                     error={!!error}
                     helperText={error ? error.message : ""}
@@ -172,7 +191,7 @@ export default function SignUp() {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "Email required",
+                  required: "El email es requerido",
                   pattern: emailPattern,
                 }}
                 render={({ field, fieldState: { error } }) => (
@@ -180,7 +199,7 @@ export default function SignUp() {
                     {...field}
                     required
                     fullWidth
-                    label="Email Address"
+                    label="Email"
                     autoComplete="email"
                     error={!!error}
                     helperText={error ? error.message : ""}
@@ -194,11 +213,7 @@ export default function SignUp() {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "Password required",
-                  minLength: {
-                    value: 4,
-                    message: "Password must be at least 4 characters",
-                  },
+                  required: "La Password es requerida",
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
@@ -225,19 +240,23 @@ export default function SignUp() {
             sx={{ mt: 3, mb: 2 }}
             disabled={status === "loading"}
           >
-            {status === "loading" ? "Signing Up..." : "Sign Up"}
+            {status === "loading" ? "Creando la cuenta..." : "Crear Cuenta"}
           </Button>
           {authError && (
             <Typography component={"p"} sx={{ color: "red", pb: "1rem" }}>
               {authError}
             </Typography>
           )}
-          <Grid container justifyContent="flex-end" spacing={2}>
+          <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link to="/signin">Already have an account? Sign in</Link>
+              <Button component={Link} to="/signin">
+                ¿Ya tienes una cuenta? Inicia sesión
+              </Button>
             </Grid>
             <Grid item>
-              <Link to="/">{"Back to Home"}</Link>
+              <Button component={Link} to="/">
+                Volver al inicio
+              </Button>
             </Grid>
           </Grid>
         </Box>

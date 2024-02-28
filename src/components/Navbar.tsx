@@ -1,21 +1,23 @@
-import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
+import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../features/auth/authSlice";
 import { jwtDecode } from "jwt-decode";
 import { TokenPayload } from "../types";
+import {
+  AppBar,
+  Avatar,
+  Box,
+  Button,
+  Container,
+  IconButton,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 
 const pages = ["My Terrains", "ah"];
 const settings = ["Account", "Logout"];
@@ -165,7 +167,7 @@ function Navbar() {
               <Typography
                 sx={{ pr: "1rem", display: { xs: "none", md: "block" } }}
               >
-                Welcome! {userEmail}
+                Bienvenido! {userEmail}
               </Typography>
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
@@ -206,15 +208,16 @@ function Navbar() {
               </Box>
             </>
           ) : (
-            <Link
+            <Button
+              component={Link}
               to="/signin"
               style={{
                 color: "white",
                 textDecoration: "none",
               }}
             >
-              <Button color="inherit">Sign In</Button>
-            </Link>
+              Iniciar Sesión
+            </Button>
           )}
         </Toolbar>
       </Container>
