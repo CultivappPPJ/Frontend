@@ -12,7 +12,7 @@ import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
 import { SignInData } from "../../types";
 import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../../features/auth/authSlice";
+import { clearError, signIn } from "../../features/auth/authSlice";
 import { RootState, AppDispatch } from "../../store";
 import { useEffect } from "react";
 
@@ -29,6 +29,7 @@ export default function SignIn() {
 
   const onSubmit = (data: SignInData) => {
     dispatch(signIn(data));
+    dispatch(clearError());
   };
 
   useEffect(() => {
@@ -36,6 +37,10 @@ export default function SignIn() {
       navigate("/");
     }
   }, [token, status, navigate]);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   if (token && status !== "loading") {
     return (

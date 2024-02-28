@@ -13,7 +13,7 @@ import { ChangeEvent, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SignUpData } from "../../types";
 import { useDispatch, useSelector } from "react-redux";
-import { signUp } from "../../features/auth/authSlice";
+import { clearError, signUp } from "../../features/auth/authSlice";
 import { AppDispatch, RootState } from "../../store";
 
 export default function SignUp() {
@@ -28,6 +28,7 @@ export default function SignUp() {
 
   const onSubmit = (data: SignUpData) => {
     dispatch(signUp(data));
+    dispatch(clearError());
   };
 
   const handleLettersInput =
@@ -44,6 +45,10 @@ export default function SignUp() {
       navigate("/");
     }
   }, [token, status, navigate]);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   if (token && status !== "loading") {
     return (
@@ -214,6 +219,10 @@ export default function SignUp() {
                 defaultValue=""
                 rules={{
                   required: "La Password es requerida",
+                  minLength: {
+                    value: 4,
+                    message: "La password debe tener al menos 4 caracteres.",
+                  },
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
