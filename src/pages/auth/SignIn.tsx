@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Container,
   Grid,
   TextField,
@@ -11,7 +12,7 @@ import { useForm, Controller } from "react-hook-form";
 import { emailPattern } from "../../utils/emailValidation";
 import { SignInData } from "../../types";
 import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../../features/auth/authSlice";
+import { clearError, signIn } from "../../features/auth/authSlice";
 import { RootState, AppDispatch } from "../../store";
 import { useEffect } from "react";
 
@@ -28,13 +29,33 @@ export default function SignIn() {
 
   const onSubmit = (data: SignInData) => {
     dispatch(signIn(data));
+    dispatch(clearError());
   };
 
   useEffect(() => {
-    if (token) {
+    if (token && status !== "loading") {
       navigate("/");
     }
-  }, [token, navigate]);
+  }, [token, status, navigate]);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  if (token && status !== "loading") {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container
@@ -53,7 +74,7 @@ export default function SignIn() {
         }}
       >
         <Typography component="h1" variant="h5">
-          Sign in
+          Iniciar Sesión
         </Typography>
         <Box
           component="form"
@@ -66,7 +87,7 @@ export default function SignIn() {
             control={control}
             defaultValue=""
             rules={{
-              required: "Email required",
+              required: "El email es requerido",
               pattern: emailPattern,
             }}
             render={({ field, fieldState: { error } }) => (
@@ -75,7 +96,7 @@ export default function SignIn() {
                 margin="normal"
                 required
                 fullWidth
-                label="Email Address"
+                label="Email"
                 autoComplete="email"
                 autoFocus
                 error={!!error}
@@ -88,11 +109,7 @@ export default function SignIn() {
             control={control}
             defaultValue=""
             rules={{
-              required: "Password required",
-              minLength: {
-                value: 4,
-                message: "Password must be at least 4 characters",
-              },
+              required: "La password es requerida",
             }}
             render={({ field, fieldState: { error } }) => (
               <TextField
@@ -118,19 +135,23 @@ export default function SignIn() {
             sx={{ mt: 3, mb: 2 }}
             disabled={status === "loading"}
           >
-            {status === "loading" ? "Signing In..." : "Sign In"}
+            {status === "loading" ? "Iniciando Sesión..." : "Iniciar Sesión"}
           </Button>
           {authError && (
             <Typography component={"p"} sx={{ color: "red", pb: "1rem" }}>
               {authError}
             </Typography>
           )}
-          <Grid container justifyContent="flex-end" spacing={2}>
+          <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link to="/signup">{"Don't have an account? Sign Up"}</Link>
+              <Button component={Link} to="/signup">
+                ¿No tienes una cuenta? Creala aquí!
+              </Button>
             </Grid>
             <Grid item>
-              <Link to="/">{"Back to Home"}</Link>
+              <Button component={Link} to="/">
+                Volver al inicio
+              </Button>
             </Grid>
           </Grid>
         </Box>

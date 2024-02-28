@@ -20,10 +20,10 @@ export const signIn = createAsyncThunk<
       return response.data.token;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        const backendError = error.response.data.error ? { message: error.response.data.error } : { message: "An unexpected error occurred" };
+        const backendError = error.response.data.error ? { message: error.response.data.error } : { message: "Ocurrió un error inesperado" };
         return rejectWithValue(backendError as BackendError);
       }
-      return rejectWithValue({ message: "An unexpected error occurred" });
+      return rejectWithValue({ message: "Ocurrió un error inesperado" });
     }
   }
 );
@@ -41,10 +41,10 @@ export const signUp = createAsyncThunk<
       return response.data.token;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        const backendError = error.response.data.error ? { message: error.response.data.error } : { message: "An unexpected error occurred" };
+        const backendError = error.response.data.error ? { message: error.response.data.error } : { message: "Ocurrió un error inesperado" };
         return rejectWithValue(backendError as BackendError);
       }
-      return rejectWithValue({ message: "An unexpected error occurred" } as BackendError);
+      return rejectWithValue({ message: "Ocurrió un error inesperado" } as BackendError);
     }
   }
 );
@@ -61,6 +61,9 @@ export const authSlice = createSlice({
     },
     setToken: (state, action) => {
       state.token = action.payload;
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -100,6 +103,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { logout, setToken } = authSlice.actions;
+export const { logout, setToken, clearError } = authSlice.actions;
 
 export default authSlice.reducer;
