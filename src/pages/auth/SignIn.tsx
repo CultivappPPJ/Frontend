@@ -87,7 +87,7 @@ export default function SignIn() {
             control={control}
             defaultValue=""
             rules={{
-              required: "El email es requerido",
+              required: "Email es requerido",
               pattern: emailPattern,
             }}
             render={({ field, fieldState: { error } }) => (
@@ -109,7 +109,7 @@ export default function SignIn() {
             control={control}
             defaultValue=""
             rules={{
-              required: "La password es requerida",
+              required: "Password es requerido",
             }}
             render={({ field, fieldState: { error } }) => (
               <TextField

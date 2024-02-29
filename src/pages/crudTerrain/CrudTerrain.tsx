@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { Terrain } from "../../types";
+import Navbar from "../../components/Navbar";
 
 const CenteredTableCell: React.FC<
   React.HTMLAttributes<HTMLTableCellElement>
@@ -135,136 +136,139 @@ export default function CrudTerrain() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        backgroundImage: 'url("")',
-        backgroundSize: "cover",
-        height: "100vh",
-      }}
-    >
-      <h2 style={{ color: "white", textShadow: "2px 2px 2px black" }}>
-        Selección de Terrenos
-      </h2>
-
+    <>
+      <Navbar />
       <div
         style={{
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          marginBottom: "16px",
-          marginTop: "8px",
+          backgroundImage: 'url("")',
+          backgroundSize: "cover",
+          height: "100vh",
         }}
       >
-        <TextField
-          label="Nombre"
-          name="name"
-          value={newTerrain.name}
-          onChange={handleInputChange}
-          sx={{ marginRight: "8px" }}
-        />
-        <TextField
-          label="Área"
-          name="area"
-          type="number"
-          value={newTerrain.area}
-          onChange={handleInputChange}
-          sx={{ marginRight: "8px" }}
-        />
-        <Select
-          label="Tipo de Suelo"
-          name="soilType"
-          value={newTerrain.soilType}
-          onChange={(e) => handleSoilTypeChange(e)}
-          sx={{ minWidth: "120px", marginRight: "8px" }}
-        >
-          <MenuItem value="Arenoso">Arenoso</MenuItem>
-          <MenuItem value="Mixto">Mixto</MenuItem>
-          <MenuItem value="Ácido">Ácido</MenuItem>
-          <MenuItem value="Calizo">Calizo</MenuItem>
-          <MenuItem value="Supresivo">Supresivo</MenuItem>
-        </Select>
+        <h2 style={{ color: "white", textShadow: "2px 2px 2px black" }}>
+          Selección de Terrenos
+        </h2>
 
-        <Button
-          variant="contained"
-          onClick={handleAddTerrain}
-          style={{ marginLeft: "8px" }}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "16px",
+            marginTop: "8px",
+          }}
         >
-          {editingIndex !== null ? "Modificar Terreno" : "Agregar Terreno"}
-        </Button>
-      </div>
+          <TextField
+            label="Nombre"
+            name="name"
+            value={newTerrain.name}
+            onChange={handleInputChange}
+            sx={{ marginRight: "8px" }}
+          />
+          <TextField
+            label="Área"
+            name="area"
+            type="number"
+            value={newTerrain.area}
+            onChange={handleInputChange}
+            sx={{ marginRight: "8px" }}
+          />
+          <Select
+            label="Tipo de Suelo"
+            name="soilType"
+            value={newTerrain.soilType}
+            onChange={(e) => handleSoilTypeChange(e)}
+            sx={{ minWidth: "120px", marginRight: "8px" }}
+          >
+            <MenuItem value="Arenoso">Arenoso</MenuItem>
+            <MenuItem value="Mixto">Mixto</MenuItem>
+            <MenuItem value="Ácido">Ácido</MenuItem>
+            <MenuItem value="Calizo">Calizo</MenuItem>
+            <MenuItem value="Supresivo">Supresivo</MenuItem>
+          </Select>
 
-      <TableContainer
-        component={Paper}
-        sx={{ maxWidth: "800px", margin: "center" }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <CenteredTableCell>Nombre</CenteredTableCell>
-              <CenteredTableCell>Área</CenteredTableCell>
-              <CenteredTableCell>Tipo de Suelo</CenteredTableCell>
-              <CenteredTableCell>Representación Visual</CenteredTableCell>
-              <CenteredTableCell>Acciones</CenteredTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {terrains.map((terrain, index) => (
-              <TableRow key={index}>
-                <CenteredTableCell>{terrain.name}</CenteredTableCell>
-                <CenteredTableCell>{terrain.area}</CenteredTableCell>
-                <CenteredTableCell>{terrain.soilType}</CenteredTableCell>
-                <CenteredTableCell>
-                  {generateVisualGrid(
-                    terrain.area,
-                    selectedSquares,
-                    (squareIndex) => handleSquareClick(squareIndex)
-                  )}
-                </CenteredTableCell>
-                <CenteredTableCell>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    style={{
-                      marginBottom: "8px",
-                      marginRight: "8px",
-                      width: "100px",
-                    }}
-                    onClick={() => handleDeleteTerrain(index)}
-                  >
-                    Eliminar
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    style={{
-                      marginBottom: "8px",
-                      marginRight: "8px",
-                      width: "100px",
-                    }}
-                    onClick={() => handleEditTerrain(index)}
-                  >
-                    Modificar
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    style={{
-                      marginBottom: "8px",
-                      marginRight: "8px",
-                      width: "100px",
-                    }}
-                    onClick={handleSaveTerrains}
-                  >
-                    Guardar
-                  </Button>
-                </CenteredTableCell>
+          <Button
+            variant="contained"
+            onClick={handleAddTerrain}
+            style={{ marginLeft: "8px" }}
+          >
+            {editingIndex !== null ? "Modificar Terreno" : "Agregar Terreno"}
+          </Button>
+        </div>
+
+        <TableContainer
+          component={Paper}
+          sx={{ maxWidth: "800px", margin: "center" }}
+        >
+          <Table>
+            <TableHead>
+              <TableRow>
+                <CenteredTableCell>Nombre</CenteredTableCell>
+                <CenteredTableCell>Área</CenteredTableCell>
+                <CenteredTableCell>Tipo de Suelo</CenteredTableCell>
+                <CenteredTableCell>Representación Visual</CenteredTableCell>
+                <CenteredTableCell>Acciones</CenteredTableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
+            </TableHead>
+            <TableBody>
+              {terrains.map((terrain, index) => (
+                <TableRow key={index}>
+                  <CenteredTableCell>{terrain.name}</CenteredTableCell>
+                  <CenteredTableCell>{terrain.area}</CenteredTableCell>
+                  <CenteredTableCell>{terrain.soilType}</CenteredTableCell>
+                  <CenteredTableCell>
+                    {generateVisualGrid(
+                      terrain.area,
+                      selectedSquares,
+                      (squareIndex) => handleSquareClick(squareIndex)
+                    )}
+                  </CenteredTableCell>
+                  <CenteredTableCell>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      style={{
+                        marginBottom: "8px",
+                        marginRight: "8px",
+                        width: "100px",
+                      }}
+                      onClick={() => handleDeleteTerrain(index)}
+                    >
+                      Eliminar
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="warning"
+                      style={{
+                        marginBottom: "8px",
+                        marginRight: "8px",
+                        width: "100px",
+                      }}
+                      onClick={() => handleEditTerrain(index)}
+                    >
+                      Modificar
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{
+                        marginBottom: "8px",
+                        marginRight: "8px",
+                        width: "100px",
+                      }}
+                      onClick={handleSaveTerrains}
+                    >
+                      Guardar
+                    </Button>
+                  </CenteredTableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    </>
   );
 }

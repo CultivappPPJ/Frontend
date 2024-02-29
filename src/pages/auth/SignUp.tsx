@@ -158,45 +158,11 @@ export default function SignUp() {
             </Grid>
             <Grid item xs={12}>
               <Controller
-                name="phoneNumber"
-                control={control}
-                defaultValue=""
-                rules={{
-                  required: "El número de teléfono es requerido",
-                  minLength: {
-                    value: 9,
-                    message: "Debe tener exactamente 9 dígitos",
-                  },
-                }}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
-                  <TextField
-                    required
-                    fullWidth
-                    label="Número de teléfono"
-                    autoComplete="tel"
-                    error={!!error}
-                    helperText={error ? error.message : ""}
-                    value={value}
-                    onChange={(e) => {
-                      const onlyNums = e.target.value.replace(/[^0-9]/g, "");
-                      if (onlyNums.length <= 9) {
-                        onChange(onlyNums);
-                      }
-                    }}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
                 name="email"
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "El email es requerido",
+                  required: "Email es requerido",
                   pattern: emailPattern,
                 }}
                 render={({ field, fieldState: { error } }) => (
@@ -218,10 +184,10 @@ export default function SignUp() {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: "La Password es requerida",
+                  required: "Password es requerido",
                   minLength: {
                     value: 4,
-                    message: "La password debe tener al menos 4 caracteres.",
+                    message: "Password debe tener al menos 4 caracteres.",
                   },
                 }}
                 render={({ field, fieldState: { error } }) => (

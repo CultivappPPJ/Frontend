@@ -77,8 +77,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component={Link}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -137,8 +137,8 @@ function Navbar() {
           <Typography
             variant="h5"
             noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
+            component={Link}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: "flex", md: "none" },
@@ -203,7 +203,7 @@ function Navbar() {
                     <MenuItem
                       key={setting}
                       onClick={() => {
-                        if (setting === "Logout") {
+                        if (setting === "Cerrar Sesión") {
                           handleLogout();
                         }
                         handleCloseUserMenu();
