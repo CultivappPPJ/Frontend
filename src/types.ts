@@ -33,3 +33,9 @@ export interface TokenPayload {
     sub: string;
 }
   
+  
+export interface Terrain {
+    name: string;
+    area: string;
+    soilType: string;
+  }
