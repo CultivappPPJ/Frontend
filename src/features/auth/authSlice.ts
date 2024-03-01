@@ -2,9 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { AuthState, BackendError, SignInData, SignUpData } from '../../types';
 
+const IDLE = 'idle';
+const LOADING = 'loading';
+const FAILED = 'failed';
+
 const initialState: AuthState = {
   token: null,
-  status: 'idle',
+  status: IDLE,
   error: null,
 };
 
@@ -17,10 +21,10 @@ export const signIn = createAsyncThunk<
   async (signInData: SignInData, { rejectWithValue }) => {
     try {
       const response = await axios.post(import.meta.env.VITE_SIGNIN, signInData);
-      return response.data.token;
+      return response.data?.token;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        const backendError = error.response.data.error ? { message: error.response.data.error } : { message: "Ocurrió un error inesperado" };
+        const backendError = error.response.data?.error ? { message: error.response.data?.error } : { message: "Ocurrió un error inesperado" };
         return rejectWithValue(backendError as BackendError);
       }
       return rejectWithValue({ message: "Ocurrió un error inesperado" });
@@ -38,10 +42,10 @@ export const signUp = createAsyncThunk<
   async (signUpData: SignUpData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_SIGNUP}`, signUpData);
-      return response.data.token;
+      return response.data?.token;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        const backendError = error.response.data.error ? { message: error.response.data.error } : { message: "Ocurrió un error inesperado" };
+        const backendError = error.response.data?.error ? { message: error.response.data?.error } : { message: "Ocurrió un error inesperado" };
         return rejectWithValue(backendError as BackendError);
       }
       return rejectWithValue({ message: "Ocurrió un error inesperado" } as BackendError);
@@ -55,12 +59,12 @@ export const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.token = null;
-      state.status = 'idle';
+      state.status = IDLE;
       state.error = null;
       localStorage.removeItem('token');
     },
-    setToken: (state, action) => {
-      state.token = action.payload;
+    setToken: (state, { payload }) => {
+      state.token = payload;
     },
     clearError: (state) => {
       state.error = null;
@@ -69,36 +73,28 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(signIn.pending, (state) => {
-        state.status = 'loading';
+        state.status = LOADING;
       })
-      .addCase(signIn.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.token = action.payload;
-        localStorage.setItem('token', action.payload);
+      .addCase(signIn.fulfilled, (state, { payload }) => {
+        state.status = IDLE;
+        state.token = payload;
+        localStorage.setItem('token', payload);
       })
-      .addCase(signIn.rejected, (state, action) => {
-        state.status = 'failed';
-        if (action.payload) {
-          state.error = action.payload.message;
-        } else {
-          state.error = action.error.message;
-        }
+      .addCase(signIn.rejected, (state, { payload, error }) => {
+        state.status = FAILED;
+        state.error = payload?.message || error.message;
       })
       .addCase(signUp.pending, (state) => {
-        state.status = 'loading';
+        state.status = LOADING;
       })
-      .addCase(signUp.fulfilled, (state, action) => {
-        state.status = 'idle';
-        state.token = action.payload;
-        localStorage.setItem('token', action.payload);
+      .addCase(signUp.fulfilled, (state, { payload }) => {
+        state.status = IDLE;
+        state.token = payload;
+        localStorage.setItem('token', payload);
       })
-      .addCase(signUp.rejected, (state, action) => {
-        state.status = 'failed';
-        if (action.payload) {
-          state.error = action.payload.message;
-        } else {
-          state.error = action.error.message;
-        }
+      .addCase(signUp.rejected, (state, { payload, error }) => {
+        state.status = FAILED;
+        state.error = payload?.message || error.message;
       });
   },
 });

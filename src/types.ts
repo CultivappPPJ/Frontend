@@ -10,7 +10,6 @@ export interface SignInResponse {
 export interface SignUpData {
     firstName: string;
     lastName: string;
-    phoneNumber: string;
     email: string;
     password: string;
 }
@@ -33,3 +32,9 @@ export interface TokenPayload {
     sub: string;
 }
   
+  
+export interface Terrain {
+    name: string;
+    area: string;
+    soilType: string;
+  }
