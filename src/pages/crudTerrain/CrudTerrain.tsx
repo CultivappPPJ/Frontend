@@ -1,7 +1,7 @@
 import React, { useState } from "react";
+import { useDropzone } from "react-dropzone";
 import {
   Button,
-  Select,
   MenuItem,
   Table,
   TableBody,
@@ -14,9 +14,9 @@ import {
   TextField,
   Container,
 } from "@mui/material";
-import { SelectChangeEvent } from "@mui/material/Select";
-import { Terrain } from "../../types";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Navbar from "../../components/Navbar";
+import { Terrain } from "../../types";
 
 const CenteredTableCell: React.FC<
   React.HTMLAttributes<HTMLTableCellElement>
@@ -28,29 +28,48 @@ export default function CrudTerrain() {
     name: "",
     area: "",
     soilType: "",
+    saleType: "",
+    image: null,
   });
   const [selectedSquares, setSelectedSquares] = useState<Set<number>>(
     new Set()
   );
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [formLocked, setFormLocked] = useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (formLocked) return;
+    
     const { name, value } = e.target;
 
-    // Validar que el valor en el campo de área no sea negativo
     if (name === "area" && parseFloat(value) < 0) {
-      return; // No actualizamos el estado si el valor es negativo
+      return;
     }
 
     setNewTerrain((prevTerrain) => ({ ...prevTerrain, [name]: value }));
   };
 
-  const handleSoilTypeChange = (event: SelectChangeEvent<string>) => {
-    const value = event.target.value;
+  const handleSoilTypeChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    if (formLocked) return;
+
+    const value = event.target.value as string;
     setNewTerrain((prevTerrain) => ({ ...prevTerrain, soilType: value }));
   };
 
+  const handleSaleTypeChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    if (formLocked) return;
+
+    const value = event.target.value as string;
+    setNewTerrain((prevTerrain) => ({ ...prevTerrain, saleType: value }));
+  };
+
   const handleSquareClick = (index: number) => {
+    if (formLocked) return;
+
     const updatedSelection = new Set(selectedSquares);
 
     if (updatedSelection.has(index)) {
@@ -63,50 +82,75 @@ export default function CrudTerrain() {
   };
 
   const handleAddTerrain = () => {
-    // Validar que los campos requeridos no estén vacíos y el área no sea negativa
     if (
       !newTerrain.name ||
       !newTerrain.area ||
       parseFloat(newTerrain.area) < 0 ||
-      !newTerrain.soilType
+      !newTerrain.soilType ||
+      !newTerrain.saleType
     ) {
       alert("Por favor, completa todos los campos correctamente.");
       return;
     }
 
     if (editingIndex !== null) {
-      // Modificar terreno existente
       const updatedTerrains = [...terrains];
       updatedTerrains[editingIndex] = newTerrain;
       setTerrains(updatedTerrains);
       setEditingIndex(null);
     } else {
-      // Agregar nuevo terreno
       setTerrains([...terrains, newTerrain]);
     }
-    setNewTerrain({ name: "", area: "", soilType: "" }); // Reiniciar los campos después de agregar/modificar un terreno
-    setSelectedSquares(new Set()); // Desmarcar todos los cuadrados seleccionados
+
+    // Descomentar la siguiente línea si deseas bloquear el formulario después de agregar
+    // setFormLocked(true);
+
+    setNewTerrain({
+      name: "",
+      area: "",
+      soilType: "",
+      saleType: "",
+      image: null,
+    });
+    setSelectedSquares(new Set());
   };
 
   const handleDeleteTerrain = (index: number) => {
+    if (formLocked) return;
+
     const updatedTerrains = [...terrains];
     updatedTerrains.splice(index, 1);
     setTerrains(updatedTerrains);
     setEditingIndex(null);
-    setSelectedSquares(new Set()); // Desmarcar todos los cuadrados seleccionados
+    setSelectedSquares(new Set());
   };
 
   const handleEditTerrain = (index: number) => {
-    // Activar la edición y cargar los datos del terreno a editar
+    if (formLocked) return;
+
     setEditingIndex(index);
     setNewTerrain(terrains[index]);
-    setSelectedSquares(new Set()); // Desmarcar todos los cuadrados seleccionados
+    setSelectedSquares(new Set());
   };
 
   const handleSaveTerrains = () => {
-    // Aquí puedes implementar la lógica para guardar los terrenos en tu backend o realizar cualquier acción necesaria
+    if (formLocked) return;
+
     console.log("Terrains to save:", terrains);
   };
+
+  const onDrop = (acceptedFiles: File[]) => {
+    if (formLocked) return;
+
+    const image = acceptedFiles[0];
+    setNewTerrain((prevTerrain) => ({ ...prevTerrain, image }));
+  };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: "image/*",
+  });
 
   const generateVisualGrid = (
     area: string,
@@ -154,72 +198,149 @@ export default function CrudTerrain() {
             Selección de Terrenos
           </h2>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "16px",
-              marginTop: "8px",
-            }}
-          >
-            <TextField
-              label="Nombre"
-              name="name"
-              value={newTerrain.name}
-              onChange={handleInputChange}
-              sx={{ marginRight: "8px" }}
-            />
-            <TextField
-              label="Área"
-              name="area"
-              type="number"
-              value={newTerrain.area}
-              onChange={handleInputChange}
-              sx={{ marginRight: "8px" }}
-            />
-            <Select
-              label="Tipo de Suelo"
-              name="soilType"
-              value={newTerrain.soilType}
-              onChange={(e) => handleSoilTypeChange(e)}
-              sx={{ minWidth: "120px", marginRight: "8px" }}
-            >
-              <MenuItem value="Arenoso">Arenoso</MenuItem>
-              <MenuItem value="Mixto">Mixto</MenuItem>
-              <MenuItem value="Ácido">Ácido</MenuItem>
-              <MenuItem value="Calizo">Calizo</MenuItem>
-              <MenuItem value="Supresivo">Supresivo</MenuItem>
-            </Select>
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="Nombre"
+                name="name"
+                value={newTerrain.name}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+                disabled={formLocked}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="Área"
+                name="area"
+                type="number"
+                value={newTerrain.area}
+                onChange={handleInputChange}
+                fullWidth
+                margin="normal"
+                disabled={formLocked}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="Tipo de Suelo"
+                name="soilType"
+                select
+                value={newTerrain.soilType}
+                onChange={(e) => handleSoilTypeChange(e)}
+                fullWidth
+                margin="normal"
+                disabled={formLocked}
+              >
+                <MenuItem value="" disabled>
+                  <em></em>
+                </MenuItem>
+                <MenuItem value="Arenoso">Arenoso</MenuItem>
+                <MenuItem value="Mixto">Mixto</MenuItem>
+                <MenuItem value="Ácido">Ácido</MenuItem>
+                <MenuItem value="Calizo">Calizo</MenuItem>
+                <MenuItem value="Supresivo">Supresivo</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <TextField
+                label="Tipo de Venta"
+                name="saleType"
+                select
+                value={newTerrain.saleType}
+                onChange={(e) => handleSaleTypeChange(e)}
+                fullWidth
+                margin="normal"
+                disabled={formLocked}
+              >
+                <MenuItem value="" disabled>
+                  <em></em>
+                </MenuItem>
+                <MenuItem value="En venta">En venta</MenuItem>
+                <MenuItem value="Personal">Personal</MenuItem>
+              </TextField>
+            </Grid>
+          </Grid>
 
-            <Button
-              variant="contained"
-              onClick={handleAddTerrain}
-              style={{ marginLeft: "8px" }}
-            >
-              {editingIndex !== null ? "Modificar Terreno" : "Agregar Terreno"}
-            </Button>
-          </div>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} sm={6} md={4} lg={3} {...getRootProps()}>
+              <input {...getInputProps()} />
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<CloudUploadIcon />}
+                fullWidth
+                disabled={formLocked}
+              >
+                Subir Imagen
+              </Button>
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+              <Button
+                variant="contained"
+                onClick={handleAddTerrain}
+                fullWidth
+                disabled={formLocked}
+              >
+                {editingIndex !== null
+                  ? "Modificar Terreno"
+                  : "Agregar Terreno"}
+              </Button>
+            </Grid>
+          </Grid>
+
+          {newTerrain.image && (
+            <Grid item xs={12} style={{ margin: "16px 0" }}>
+              <img
+                src={URL.createObjectURL(newTerrain.image)}
+                alt="Vista previa de la imagen"
+                style={{
+                  width: "30%",
+                  height: "auto",
+                  marginBottom: "8px",
+                  margin: "0 auto",
+                  display: "block",
+                }}
+              />
+            </Grid>
+          )}
 
           <TableContainer
             component={Paper}
-            sx={{ maxWidth: "800px", margin: "center" }}
+            sx={{ maxWidth: "1200px", margin: "auto", marginTop: "16px" }}
           >
             <Table>
               <TableHead>
                 <TableRow>
+                  <CenteredTableCell>Imagen</CenteredTableCell>
                   <CenteredTableCell>Nombre</CenteredTableCell>
                   <CenteredTableCell>Área</CenteredTableCell>
                   <CenteredTableCell>Tipo de Suelo</CenteredTableCell>
-                  <CenteredTableCell>Representación Visual</CenteredTableCell>
+                  <CenteredTableCell>Tipo de Venta</CenteredTableCell>
+                  <CenteredTableCell>
+                    Representación Visual
+                  </CenteredTableCell>
                   <CenteredTableCell>Acciones</CenteredTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {terrains.map((terrain, index) => (
                   <TableRow key={index}>
+                    <CenteredTableCell>
+                      {terrain.image && (
+                        <img
+                          src={URL.createObjectURL(terrain.image)}
+                          alt={`Imagen de ${terrain.name}`}
+                          style={{ width: "200px", height: "200px" }}
+                        />
+                      )}
+                    </CenteredTableCell>
                     <CenteredTableCell>{terrain.name}</CenteredTableCell>
                     <CenteredTableCell>{terrain.area}</CenteredTableCell>
                     <CenteredTableCell>{terrain.soilType}</CenteredTableCell>
+                    <CenteredTableCell>{terrain.saleType}</CenteredTableCell>
                     <CenteredTableCell>
                       {generateVisualGrid(
                         terrain.area,
@@ -237,6 +358,7 @@ export default function CrudTerrain() {
                           width: "100px",
                         }}
                         onClick={() => handleDeleteTerrain(index)}
+                        disabled={formLocked}
                       >
                         Eliminar
                       </Button>
@@ -249,6 +371,7 @@ export default function CrudTerrain() {
                           width: "100px",
                         }}
                         onClick={() => handleEditTerrain(index)}
+                        disabled={formLocked}
                       >
                         Modificar
                       </Button>
@@ -261,6 +384,7 @@ export default function CrudTerrain() {
                           width: "100px",
                         }}
                         onClick={handleSaveTerrains}
+                        disabled={formLocked}
                       >
                         Guardar
                       </Button>

@@ -37,4 +37,6 @@ export interface Terrain {
     name: string;
     area: string;
     soilType: string;
+    saleType: string;
+    image:null;
   }
