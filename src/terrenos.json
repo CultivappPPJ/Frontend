@@ -1,0 +1,30 @@
+[
+    {
+      "id": 1,
+      "area": 64,
+      "tipo_suelo": "Calizo",
+      "tipo_vegetal": "Zanahorias",
+      "foto": "Zanahorias.jpg",
+      "nombre_agricultor": "Marcial Díaz",
+      "email_contacto": "marcial.diaz@gestorverde.cl"
+    },
+    {
+      "id": 2,
+      "area": 50,
+      "tipo_suelo": "Arenoso",
+      "tipo_vegetal": "Papas",
+      "foto": "https://proain.com/cdn/shop/articles/la_humedad_del_suelo_en_la_produccion_de_papa_800x.jpg?v=1603389050",
+      "nombre_agricultor": "Eduardo Torres",
+      "email_contacto": "eduardo.torres@gestorverde.cl"
+    },
+    {
+      "id": 3,
+      "area": 74,
+      "tipo_suelo": "Arenoso",
+      "tipo_vegetal": "Lechugas",
+      "foto": "https://cdn.wikifarmer.com/wp-content/uploads/2019/07/Como-Cultivar-Lechuga-%E2%80%93-Guia-Completa-de-Cultivo-de-la-Lechuga-desde-la-Siembra-hasta-la-Cosecha.jpg",
+      "nombre_agricultor": "Sebastián Neira",
+      "email_contacto": "sebastian.neira@gestorverde.cl"
+    }
+  ]
+  
