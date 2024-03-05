@@ -16,11 +16,11 @@ interface CultivoCardProps {
       <>
       <Card style={{ marginTop: "20px" }}>
         <CardContent>
-          <Typography variant="h6" style={{ marginBottom: "20px" }}>{`Cultivo n° ${cultivo.id} (${cultivo.tipo_vegetal})`}</Typography>
+          <Typography variant="h6" style={{ marginTop: "-20px", marginBottom: "20px", textAlign: "center", fontWeight: "normal" }}>{`Cultivo n° ${cultivo.id} (${cultivo.tipo_vegetal})`}</Typography>
           <CardMedia
             component="img"
             alt={cultivo.tipo_vegetal}
-            height="200px"
+            height="250px"
             image={cultivo.foto}
             style={{ marginBottom: "20px" }}
           />
