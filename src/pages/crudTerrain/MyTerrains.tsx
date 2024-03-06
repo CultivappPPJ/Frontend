@@ -7,6 +7,7 @@ import {
   Grid,
   Typography,
   Box,
+  Pagination,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
@@ -19,6 +20,11 @@ export default function MyTerrains() {
   const [terrains, setTerrains] = useState<TerrainResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [paginationInfo, setPaginationInfo] = useState({
+    currentPage: 0,
+    totalPages: 1,
+  });
+
   const [selectedTerrainId, setSelectedTerrainId] = useState<number | null>(
     null
   );
@@ -33,6 +39,13 @@ export default function MyTerrains() {
 
   const handleClose = () => {
     setOpenDialog(false);
+  };
+
+  const handleChangePage = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number
+  ) => {
+    fetchData(newPage - 1);
   };
 
   const handleDelete = async () => {
@@ -53,12 +66,12 @@ export default function MyTerrains() {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = async (pageNumber = 0) => {
     if (!token) return;
     const userEmail = "berryfarmer@example.com";
     try {
       const response = await axios.get<Root>(
-        `${import.meta.env.VITE_MYTERRAINS}`,
+        `${import.meta.env.VITE_MYTERRAINS}?page=${pageNumber}&size=6`,
         {
           params: {
             email: userEmail,
@@ -68,7 +81,11 @@ export default function MyTerrains() {
           },
         }
       );
-      setTerrains(response.data?.content);
+      setTerrains(response.data.content);
+      setPaginationInfo({
+        currentPage: response.data.pageable.pageNumber + 1,
+        totalPages: response.data.totalPages,
+      });
     } catch (err) {
       setError("Error fetching data");
       console.error(err);
@@ -146,6 +163,22 @@ export default function MyTerrains() {
           </Grid>
         ))}
       </Grid>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginY: "1rem",
+        }}
+      >
+        <Pagination
+          count={paginationInfo.totalPages}
+          page={paginationInfo.currentPage}
+          onChange={handleChangePage}
+          color="primary"
+          size="large"
+          className="pagination"
+        />
+      </Box>
       <ModalDelete
         openDialog={openDialog}
         handleClose={handleClose}
