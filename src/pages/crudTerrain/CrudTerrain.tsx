@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import type { Accept } from 'react-dropzone';
+
 import {
   Button,
   MenuItem,
@@ -29,7 +31,7 @@ export default function CrudTerrain() {
     area: "",
     soilType: "",
     saleType: "",
-    image: null,
+    image: undefined,
   });
   const [selectedSquares, setSelectedSquares] = useState<Set<number>>(
     new Set()
@@ -110,7 +112,7 @@ export default function CrudTerrain() {
       area: "",
       soilType: "",
       saleType: "",
-      image: null,
+      image: undefined,
     });
     setSelectedSquares(new Set());
   };
@@ -141,17 +143,21 @@ export default function CrudTerrain() {
 
   const onDrop = (acceptedFiles: File[]) => {
     if (formLocked) return;
-
+  
     const image = acceptedFiles[0];
-    setNewTerrain((prevTerrain) => ({ ...prevTerrain, image }));
+  
+    setNewTerrain((prevTerrain: Terrain) => ({
+      ...prevTerrain,
+      image: image !== undefined ? image : (undefined as any),
+    }));
   };
-
+ 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     multiple: false,
-    accept: "image/*",
+    accept: 'image/*' as unknown as Accept,
   });
-
+  
   const generateVisualGrid = (
     area: string,
     selectedSquares: Set<number>,
