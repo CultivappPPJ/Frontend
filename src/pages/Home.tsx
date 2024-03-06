@@ -14,18 +14,19 @@ import {
 import Navbar from "../components/Navbar";
 import CultivoCard from "../components/TerrainCard";
 import Pagination from "@mui/material/Pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TerrainCard from "../components/TerrainCard";
 
 interface Terrain {
   id: number;
-  area: number;
-  soil_type: string;
-  vegetable_type: string;
+  area: string;
+  soilType: string;
+  plantType: string;
   photo: string;
-  vegetable_producer: string;
-  contact_email: string;
-  remaining_days: number;
+  contactEmail: string;
+  remainingDays: number;
+  forSale: boolean;
+  fullName: string;
 }
 
 const terrainsData = [
@@ -75,8 +76,26 @@ const ITEMS_PER_PAGE = 3;
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [terrainsData, setTerrainsData] = useState<Terrain[]>([]);
   const [selectedTerrain, setSelectedTerrain] = useState<Terrain | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Realizar la solicitud fetch al back end
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/v1/terrain/all"
+        );
+        const data = await response.json();
+        setTerrainsData(data.content); // Actualizar el estado con los datos obtenidos de la API
+      } catch (error) {
+        console.error("Error al obtener datos de la API:", error);
+      }
+    };
+
+    fetchData();
+  }, []); // El array vacío asegura que la solicitud se realice solo una vez al montar el componente
 
   const handleChangePage = (
     event: React.ChangeEvent<unknown>,
@@ -95,7 +114,8 @@ export default function Home() {
   };
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedTerrains = terrainsData.slice(
+  const filteredTerrains = terrainsData.filter((terrain) => terrain.forSale);
+  const paginatedTerrains = filteredTerrains.slice(
     startIndex,
     startIndex + ITEMS_PER_PAGE
   );
@@ -138,11 +158,11 @@ export default function Home() {
 
         {/* Modal */}
         <Dialog open={isModalOpen} onClose={handleCloseModal}>
-          <DialogTitle style={{ textAlign: "center" }}>{`Cultivo n° ${selectedTerrain?.id} (${selectedTerrain?.vegetable_type})`}</DialogTitle>
+          <DialogTitle style={{ textAlign: "center" }}>{`Cultivo n° ${selectedTerrain?.id} (${selectedTerrain?.plantType})`}</DialogTitle>
           <DialogContent>
             <CardMedia
               component="img"
-              alt={selectedTerrain?.vegetable_type}
+              alt={selectedTerrain?.plantType}
               height="200px"
               image={selectedTerrain?.photo}
               style={{ marginBottom: "30px", marginTop: "10px" }}
@@ -153,21 +173,21 @@ export default function Home() {
               {" hectáreas"}
               <br />
               <span style={{ fontWeight: "bold" }}>Tipo de suelo:</span>{" "}
-              {selectedTerrain?.soil_type}
+              {selectedTerrain?.soilType}
               <br />
               <span style={{ fontWeight: "bold" }}>Días restantes:</span>{" "}
-              {selectedTerrain?.remaining_days}
+              {selectedTerrain?.remainingDays}
               <br />
               <br />
               <span style={{ fontWeight: "bold" }}>
                 Nombre del agricultor:
               </span>{" "}
-              {selectedTerrain?.vegetable_producer}
+              {selectedTerrain?.fullName}
               <br />
               <span style={{ fontWeight: "bold" }}>
                 Email de contacto:
               </span>{" "}
-              {selectedTerrain?.contact_email}
+              {selectedTerrain?.contactEmail}
             </DialogContentText>
           </DialogContent>
           <DialogActions style={{ justifyContent: "center", marginTop: "-10px" }}>

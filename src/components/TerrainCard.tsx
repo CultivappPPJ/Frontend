@@ -4,10 +4,10 @@ import { Card, CardContent, Typography, CardMedia } from "@mui/material";
 interface TerrainCardProps {
     terrain: {
       id: number;
-      vegetable_type: string;
+      plantType: string;
       photo: string;
-      vegetable_producer: string;
-      contact_email: string;
+      fullName: string;
+      contactEmail: string;
     };
   }
   
@@ -16,19 +16,19 @@ interface TerrainCardProps {
       <>
       <Card style={{ marginTop: "20px" }}>
         <CardContent>
-          <Typography variant="h6" style={{ marginTop: "-20px", marginBottom: "15px", textAlign: "center", fontWeight: "normal" }}>{`Cultivo n° ${terrain.id} (${terrain.vegetable_type})`}</Typography>
+          <Typography variant="h6" style={{ marginTop: "-20px", marginBottom: "15px", textAlign: "center", fontWeight: "normal" }}>{`Cultivo n° ${terrain.id} (${terrain.plantType})`}</Typography>
           <CardMedia
             component="img"
-            alt={terrain.vegetable_type}
+            alt={terrain.plantType}
             height="270px"
             image={terrain.photo}
             style={{ marginBottom: "20px" }}
           />
           <Typography>
-            <span style={{ fontWeight: "bold" }}>Agricultor:</span> {terrain.vegetable_producer}
+            <span style={{ fontWeight: "bold" }}>Agricultor:</span> {terrain.plantType}
           </Typography>
           <Typography>
-            <span style={{ fontWeight: "bold" }}>Contacto:</span> {terrain.contact_email}
+            <span style={{ fontWeight: "bold" }}>Contacto:</span> {terrain.contactEmail}
           </Typography>
         </CardContent>
       </Card>

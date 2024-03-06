@@ -1,0 +1,59 @@
+.welcome-message {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.available-crops {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: normal;
+}
+
+.no-crops-message {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.no-crops-message img {
+  margin-top: "10px";
+  max-width: "55%";
+}
+
+.terrain-card {
+    cursor: pointer;
+}
+
+.pagination {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.dialog-title {
+    text-align: center;
+}
+
+.card-media {
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+
+span {
+    font-weight: bold;
+}
+
+#ready-for-sale {
+    color: green;
+    font-weight: bold;
+}
+
+.dialog-actions {
+    justify-content: center;
+    margin-top: -10px;
+}
+
+Button {
+    color: green;
+}
