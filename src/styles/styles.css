@@ -1,12 +1,13 @@
 .welcome-message {
-  margin-top: 30px;
-  margin-bottom: 20px;
+  margin-top: 30px !important;
+  margin-bottom: 20px !important;
   text-align: center;
+  font-weight: normal !important;
 }
 
 .available-crops {
-  margin-top: 10px;
-  margin-bottom: 30px;
+  margin-top: 10px !important;
+  margin-bottom: 30px !important;
   text-align: center;
   font-weight: normal;
 }
@@ -16,9 +17,15 @@
   margin-top: 20px;
 }
 
-.no-crops-message img {
-  margin-top: "10px";
-  max-width: "55%";
+.no-crops-image {
+  margin-top: 10px;
+  max-height: 420px;
+}
+
+.img {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  max-height: 250px;
 }
 
 .terrain-card {
@@ -26,7 +33,7 @@
 }
 
 .pagination {
-    margin-top: 30px;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
 }
@@ -44,8 +51,8 @@ span {
     font-weight: bold;
 }
 
-#ready-for-sale {
-    color: green;
+.ready-for-sale {
+    color: green !important;
     font-weight: bold;
 }
 
@@ -56,4 +63,19 @@ span {
 
 Button {
     color: green;
+}
+
+#remaining-days {
+  font-weight: normal;
+}
+
+.card {
+  margin-top: 20px;
+}
+
+.card-title {
+  margin-top: -20px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: normal !important;
 }
