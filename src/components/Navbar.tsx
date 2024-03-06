@@ -19,7 +19,10 @@ import {
   Typography,
 } from "@mui/material";
 
-const pages = [{ title: "Agregar Terreno", path: "/crud" }];
+const pages = [
+  { title: "Mis Terrenos", path: "/my/terrain" },
+  { title: "Agregar Terreno", path: "/crud" },
+];
 const settings = ["Cerrar Sesión"];
 
 function Navbar() {
