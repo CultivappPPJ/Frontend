@@ -13,5 +13,8 @@ export const theme = createTheme({
       secondary: {
         main: "#19857b",
       },
+      warning: {
+        main: "#ffab40"
+      }
     },
   });

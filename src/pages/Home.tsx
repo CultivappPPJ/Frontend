@@ -17,7 +17,7 @@ import Pagination from "@mui/material/Pagination";
 import { useEffect, useState } from "react";
 import TerrainCard from "../components/TerrainCard";
 import "../styles/styles.css";
-import axios from 'axios';
+import axios from "axios";
 
 interface Terrain {
   id: number;
@@ -44,7 +44,9 @@ export default function Home() {
     // Realizar la solicitud axios al back end
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/v1/terrain/all");
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/terrain/all"
+        );
         const data = response.data;
         setTerrainsData(data.content); // Actualizar el estado con los datos obtenidos de la API
         setLoading(false);
@@ -52,7 +54,7 @@ export default function Home() {
         console.error("Error al obtener datos de la API:", error);
       }
     };
-  
+
     fetchData();
   }, []); // El array vacío asegura que la solicitud se realice solo una vez al montar el componente
 
@@ -81,7 +83,6 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
       <Container maxWidth="xl">
         {loading ? (
           // Muestra el spinner de carga mientras se cargan los datos
