@@ -26,43 +26,45 @@
   margin-top: 15px;
   margin-bottom: 20px;
   max-height: 250px;
+  aspect-ratio: 16/9;
 }
 
 .terrain-card {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .pagination {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1rem;
 }
 
 .dialog-title {
-    text-align: center;
+  text-align: center;
 }
 
 .card-media {
-    margin-bottom: 30px;
-    margin-top: 10px;
+  margin-bottom: 30px;
+  margin-top: 10px;
 }
 
 span {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .ready-for-sale {
-    color: green !important;
-    font-weight: bold;
+  color: green !important;
+  font-weight: bold;
 }
 
 .dialog-actions {
-    justify-content: center;
-    margin-top: -10px;
+  justify-content: center;
+  margin-top: -10px;
 }
 
 Button {
-    color: green;
+  color: green;
 }
 
 #remaining-days {
