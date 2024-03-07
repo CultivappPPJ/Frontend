@@ -1,6 +1,6 @@
 .welcome-message {
   margin-top: 30px !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 30px !important;
   text-align: center;
   font-weight: normal !important;
 }
@@ -25,7 +25,7 @@
 .img {
   margin-top: 15px;
   margin-bottom: 20px;
-  max-height: 250px;
+  max-height: 275px;
 }
 
 .terrain-card {
@@ -33,7 +33,7 @@
 }
 
 .pagination {
-    margin-top: 15px;
+    margin-top: 25px;
     display: flex;
     justify-content: center;
 }
@@ -78,4 +78,18 @@ Button {
   margin-bottom: 15px;
   text-align: center;
   font-weight: normal !important;
+}
+
+#handle-add-terrain {
+  max-width: 5px;
+  min-width: fit-content;
+  min-height: fit-content;
+  font-size: medium;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
 }

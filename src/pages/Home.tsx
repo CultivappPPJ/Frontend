@@ -18,18 +18,7 @@ import { useEffect, useState } from "react";
 import TerrainCard from "../components/TerrainCard";
 import "../styles/styles.css";
 import axios from 'axios';
-
-interface Terrain {
-  id: number;
-  area: string;
-  soilType: string;
-  plantType: string;
-  photo: string;
-  email: string;
-  remainingDays: number;
-  forSale: boolean;
-  fullName: string;
-}
+import { Terrain } from "../types";
 
 const ITEMS_PER_PAGE = 3;
 
