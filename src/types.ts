@@ -30,6 +30,8 @@ export interface AuthState {
 
 export interface TokenPayload {
   sub: string;
+  firstName: string;
+  lastName: string;
 }
 
 export interface Root {
