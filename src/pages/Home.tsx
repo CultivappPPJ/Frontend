@@ -138,7 +138,8 @@ export default function Home() {
                   className="card-media"
                 />
                 <DialogContentText>
-                  <span>Área de cultivo:</span> {selectedTerrain?.area}
+                  <span>Área de cultivo:</span> {selectedTerrain?.area}{" "}
+                  hectareas
                   <br />
                   <span>Tipo de suelo:</span> {selectedTerrain?.soilType}
                   <br />

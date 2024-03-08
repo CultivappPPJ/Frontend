@@ -8,13 +8,17 @@ import {
   Typography,
   Box,
   Pagination,
+  CircularProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Root, TerrainResponse } from "../../types";
+import { Root, TerrainResponse, TokenPayload } from "../../types";
 import ModalDelete from "../../components/ModalDelete";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { jwtDecode } from "jwt-decode";
 
 export default function MyTerrains() {
   const [terrains, setTerrains] = useState<TerrainResponse[]>([]);
@@ -24,12 +28,13 @@ export default function MyTerrains() {
     currentPage: 0,
     totalPages: 1,
   });
-
   const [selectedTerrainId, setSelectedTerrainId] = useState<number | null>(
     null
   );
   const [selectedTerrainName, setSelectedTerrainName] = useState<string>("");
-  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const { token, status } = useSelector((state: RootState) => state.auth);
 
   const handleClickOpen = (terrainId: number, terrainName: string) => {
     setOpenDialog(true);
@@ -68,7 +73,6 @@ export default function MyTerrains() {
 
   const fetchData = async (pageNumber = 0) => {
     if (!token) return;
-    const userEmail = "berryfarmer@example.com";
     try {
       const response = await axios.get<Root>(
         `${import.meta.env.VITE_MYTERRAINS}?page=${pageNumber}&size=6`,
@@ -93,8 +97,42 @@ export default function MyTerrains() {
   };
 
   useEffect(() => {
-    fetchData();
+    if (token) {
+      try {
+        const decoded = jwtDecode<TokenPayload>(token);
+        setUserEmail(decoded.sub);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
   }, [token]);
+
+  useEffect(() => {
+    if (userEmail) {
+      fetchData();
+    }
+  }, [userEmail]);
+
+  useEffect(() => {
+    if (token === null) {
+      navigate("/");
+    }
+  }, [token, navigate]);
+
+  if (status !== "idle") {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container maxWidth="xl">
@@ -130,6 +168,18 @@ export default function MyTerrains() {
                 <Typography>
                   <span style={{ fontWeight: "bold" }}>Contacto:</span>{" "}
                   {terrain.email}
+                </Typography>
+                <Typography>
+                  <span style={{ fontWeight: "bold" }}>Area de Cultivo:</span>{" "}
+                  {terrain.area} hectareas
+                </Typography>
+                <Typography>
+                  <span style={{ fontWeight: "bold" }}>Tipo de Cultivo:</span>{" "}
+                  {terrain.plantType}
+                </Typography>
+                <Typography>
+                  <span style={{ fontWeight: "bold" }}>En Venta:</span>{" "}
+                  {terrain.forSale ? "Sí" : "No"}
                 </Typography>
                 <Box
                   sx={{
