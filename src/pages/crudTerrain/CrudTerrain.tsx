@@ -299,7 +299,7 @@ export default function CrudTerrain() {
             <TextField
               disabled={formLocked}
               size="small"
-              label="Tipo de Venta"
+              label="En Venta"
               select
               variant="outlined"
               fullWidth
@@ -309,8 +309,8 @@ export default function CrudTerrain() {
               error={!!errors.forSale}
               helperText={errors.forSale?.message}
             >
-              <MenuItem value="true">En venta</MenuItem>
-              <MenuItem value="false">Personal</MenuItem>
+              <MenuItem value="true">Si</MenuItem>
+              <MenuItem value="false">No</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12}>
@@ -362,9 +362,7 @@ export default function CrudTerrain() {
                     <CenteredTableCell>
                       {terrain.remainingDays}
                     </CenteredTableCell>
-                    <CenteredTableCell>
-                      {terrain.forSale !== true ? "Personal" : "En Venta"}
-                    </CenteredTableCell>
+                    <CenteredTableCell>{terrain.forSale}</CenteredTableCell>
                     <CenteredTableCell>
                       <Box
                         sx={{

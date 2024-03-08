@@ -128,7 +128,7 @@ export default function Home() {
 
             {/* Modal */}
             <Dialog open={isModalOpen} onClose={handleCloseModal}>
-              <DialogTitle className="dialog-title">{`Cultivo n° ${selectedTerrain?.id} (${selectedTerrain?.plantType})`}</DialogTitle>
+              <DialogTitle className="dialog-title">{`Cultivo de ${selectedTerrain?.plantType}`}</DialogTitle>
               <DialogContent>
                 <CardMedia
                   component="img"
@@ -153,6 +153,8 @@ export default function Home() {
                       {selectedTerrain?.remainingDays}
                     </span>
                   )}
+                  <br />
+                  <span>Tipo cultivo:</span> {selectedTerrain?.plantType}
                   <br />
                   <br />
                   <span>Nombre del agricultor:</span>{" "}

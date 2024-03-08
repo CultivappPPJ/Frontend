@@ -53,7 +53,17 @@ export default function EditTerrain() {
     formState: { errors },
     reset,
     setValue,
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({
+    defaultValues: {
+      fullName: "",
+      area: 0,
+      soilType: "Mixto",
+      plantType: "Olivo",
+      photo: "url",
+      remainingDays: 0,
+      forSale: true,
+    },
+  });
   const [terrain, setTerrain] = useState<IFormInput | null>(null);
   const [selectedSquares, setSelectedSquares] = useState<Set<number>>(
     new Set()
@@ -190,6 +200,7 @@ export default function EditTerrain() {
           Object.keys(data).forEach((key) => {
             setValue(key, data[key]);
           });
+          setFormLocked(true);
         } catch (error) {
           console.error(
             "Ocurrió un error al cargar los datos del terreno: ",
@@ -334,7 +345,7 @@ export default function EditTerrain() {
             <TextField
               disabled={formLocked}
               size="small"
-              label="Tipo de Venta"
+              label="En Venta"
               select
               variant="outlined"
               fullWidth
@@ -344,8 +355,8 @@ export default function EditTerrain() {
               error={!!errors.forSale}
               helperText={errors.forSale?.message}
             >
-              <MenuItem value="true">En venta</MenuItem>
-              <MenuItem value="false">Personal</MenuItem>
+              <MenuItem value="true">Si</MenuItem>
+              <MenuItem value="false">No</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12}>
@@ -397,9 +408,7 @@ export default function EditTerrain() {
                     <CenteredTableCell>
                       {terrain.remainingDays}
                     </CenteredTableCell>
-                    <CenteredTableCell>
-                      {terrain.forSale !== true ? "Personal" : "En Venta"}
-                    </CenteredTableCell>
+                    <CenteredTableCell>{terrain.forSale}</CenteredTableCell>
                     <CenteredTableCell>
                       <Box
                         sx={{
