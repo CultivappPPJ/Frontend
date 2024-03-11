@@ -22,6 +22,7 @@ import {
 const pages = [
   { title: "Mis Terrenos", path: "/my/terrain" },
   { title: "Agregar Terreno", path: "/crud" },
+  { title: "¿Quiénes somos?", path: "/landing"},
 ];
 const settings = ["Cerrar Sesión"];
 

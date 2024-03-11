@@ -106,3 +106,53 @@ Button {
   font-size: 0.8rem !important; 
   padding: 4px 8px !important;
 }
+
+.about-us-title {
+  text-align: center;
+  margin-bottom: 35px !important; 
+  margin-top: 0px !important; 
+  color: white;
+}
+
+.about-us-text {
+  text-align: justify;
+  font-size: larger; 
+  color: white;
+}
+
+.about-us-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.custom-card {
+  background-color: #dcedc8;
+  border-radius: 16px;
+  padding: 12px;
+  margin-top: 45px;
+  width: auto;
+  height: auto;
+  background-color: #0E402D !important;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; 
+  width: 100%;
+}
+
+.logo-image {
+  width: 100%;
+  max-width: 400px; 
+  margin-top: 80px;
+  margin-left: 150px;
+  margin-right: auto;
+  display: block;
+  border-radius: 5px;
+}
+
