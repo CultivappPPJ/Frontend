@@ -79,7 +79,7 @@ export default function Home() {
         ) : (
           // El resto del contenido cuando los datos están cargados
           <>
-            <Typography variant="h6" className="welcome-message">
+            <Typography variant="h5" className="welcome-message">
               {terrainsData.length > 0
                 ? "¡Bienvenido a CultivApp! Cultivos disponibles para ventas:"
                 : "¡Bienvenido a CultivApp! Aún no hay cultivos a la venta"}
@@ -109,7 +109,7 @@ export default function Home() {
                       onClick={() => handleCardClick(terrain)}
                       className="terrain-card"
                     >
-                      <TerrainCard terrain={terrain} />
+                      <TerrainCard terrain={terrain} onCardClick={handleCardClick}/>
                     </Card>
                   </Grid>
                 ))}
