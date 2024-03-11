@@ -74,3 +74,8 @@ export interface Sort {
     unsorted: boolean
     sorted: boolean
 }
+
+export interface SeedType {
+  id: number;
+  label: string;
+}

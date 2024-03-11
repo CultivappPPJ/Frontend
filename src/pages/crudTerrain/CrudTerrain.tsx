@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import {
   Button,
   TextField,
@@ -26,6 +26,7 @@ import { TokenPayload } from "../../types";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
+import ComboBox from "../../components/ComboBox";
 
 interface IFormInput {
   fullName: string;
@@ -47,6 +48,7 @@ export default function CrudTerrain() {
     handleSubmit,
     formState: { errors },
     reset,
+    control,
     setValue,
   } = useForm<IFormInput>();
   const [terrain, setTerrain] = useState<IFormInput | null>(null);
@@ -204,7 +206,7 @@ export default function CrudTerrain() {
       <Typography variant="h5" sx={{ py: "1rem", textAlign: "center" }}>
         Agregar Terreno
       </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
@@ -251,29 +253,29 @@ export default function CrudTerrain() {
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="Vegetal"
-              variant="outlined"
-              fullWidth
-              {...register("plantType", {
-                required: "Este campo es obligatorio",
-              })}
-              error={!!errors.plantType}
-              helperText={errors.plantType?.message}
-            />
+            <ComboBox />
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="URL de la imagen"
-              variant="outlined"
-              fullWidth
-              {...register("photo", { required: "Este campo es obligatorio" })}
-              error={!!errors.photo}
-              helperText={errors.photo?.message}
+            <Controller
+              name="photo"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: "URL de la imagen es requerido",
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  disabled={formLocked}
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  fullWidth
+                  label="URL de la imagen"
+                  error={!!error}
+                  helperText={error ? error.message : ""}
+                />
+              )}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -417,7 +419,7 @@ export default function CrudTerrain() {
             </TableContainer>
           )}
         </Grid>
-      </form>
+      </Box>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={5000}
