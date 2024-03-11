@@ -146,72 +146,81 @@ export default function MyTerrains() {
           marginY: "2rem",
         }}
       >
-        {terrains.map((terrain) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={terrain.id}>
-            <Card>
-              <CardContent>
-                <Typography
-                  variant="h6"
-                  style={{ marginBottom: "20px" }}
-                >{`Cultivo n° ${terrain.id} (${terrain.plantType})`}</Typography>
-                <CardMedia
-                  component="img"
-                  alt={terrain.plantType}
-                  height="200px"
-                  image={terrain.photo}
-                  style={{ marginBottom: "20px" }}
-                />
-                <Typography>
-                  <span style={{ fontWeight: "bold" }}>Agricultor:</span>{" "}
-                  {terrain.fullName}
-                </Typography>
-                <Typography>
-                  <span style={{ fontWeight: "bold" }}>Contacto:</span>{" "}
-                  {terrain.email}
-                </Typography>
-                <Typography>
-                  <span style={{ fontWeight: "bold" }}>Area de Cultivo:</span>{" "}
-                  {terrain.area} hectareas
-                </Typography>
-                <Typography>
-                  <span style={{ fontWeight: "bold" }}>Tipo de Cultivo:</span>{" "}
-                  {terrain.plantType}
-                </Typography>
-                <Typography>
-                  <span style={{ fontWeight: "bold" }}>En Venta:</span>{" "}
-                  {terrain.forSale ? "Sí" : "No"}
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginTop: "10px",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    color="warning"
-                    sx={{ color: "white" }}
-                    component={Link}
-                    to={`/update/${terrain.id}`}
+        {terrains.length === 0 ? (
+          <Typography
+            variant="h4"
+            sx={{ textAlign: "center", marginTop: "2rem" }}
+          >
+            No hay terrenos disponibles
+          </Typography>
+        ) : (
+          terrains.map((terrain) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={terrain.id}>
+              <Card>
+                <CardContent>
+                  <Typography
+                    variant="h6"
+                    style={{ marginBottom: "20px" }}
+                  >{`Cultivo de ${terrain.plantType}`}</Typography>
+                  <CardMedia
+                    component="img"
+                    alt={terrain.plantType}
+                    height="200px"
+                    image={terrain.photo}
+                    style={{ marginBottom: "20px" }}
+                  />
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>Agricultor:</span>{" "}
+                    {terrain.fullName}
+                  </Typography>
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>Contacto:</span>{" "}
+                    {terrain.email}
+                  </Typography>
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>Area de Cultivo:</span>{" "}
+                    {terrain.area} hectareas
+                  </Typography>
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>Tipo de Cultivo:</span>{" "}
+                    {terrain.plantType}
+                  </Typography>
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>En Venta:</span>{" "}
+                    {terrain.forSale ? "Sí" : "No"}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginTop: "10px",
+                    }}
                   >
-                    Editar
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() =>
-                      handleClickOpen(terrain.id, terrain.plantType)
-                    }
-                    startIcon={<DeleteIcon />}
-                  >
-                    Eliminar
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+                    <Button
+                      variant="contained"
+                      color="warning"
+                      sx={{ color: "white" }}
+                      component={Link}
+                      to={`/update/${terrain.id}`}
+                    >
+                      Editar
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() =>
+                        handleClickOpen(terrain.id, terrain.plantType)
+                      }
+                      startIcon={<DeleteIcon />}
+                    >
+                      Eliminar
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        )}
       </Grid>
       <Box
         sx={{
