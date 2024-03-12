@@ -71,7 +71,7 @@ const ModalDeleteAccount: React.FC<ModalDeleteAccountProps> = ({
   };
 
   return (
-    <Container>
+    <>
       <Dialog
         open={openDialog}
         onClose={handleClose}
@@ -110,7 +110,7 @@ const ModalDeleteAccount: React.FC<ModalDeleteAccountProps> = ({
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </Container>
+    </>
   );
 };
 
