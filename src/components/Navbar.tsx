@@ -18,13 +18,14 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import ModalDeleteAccount from "./ModalDeleteAccount";
 
 const pages = [
   { title: "Mis Terrenos", path: "/my/terrain" },
   { title: "Agregar Terreno", path: "/crud" },
-  { title: "¿Quiénes somos?", path: "/landing"},
+  { title: "¿Quiénes somos?", path: "/landing" },
 ];
-const settings = ["Cerrar Sesión"];
+const settings = ["Cerrar Sesión", "Eliminar mi cuenta"];
 
 function Navbar() {
   const [userEmail, setUserEmail] = React.useState<string | null>(null);
@@ -34,6 +35,8 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const [openDeleteAccountModal, setOpenDeleteAccountModal] =
+    React.useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,6 +44,10 @@ function Navbar() {
   const handleLogout = () => {
     dispatch(logout());
     navigate("/signin");
+  };
+
+  const handleDeleteAccount = () => {
+    setOpenDeleteAccountModal(true);
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -211,6 +218,8 @@ function Navbar() {
                       onClick={() => {
                         if (setting === "Cerrar Sesión") {
                           handleLogout();
+                        } else if (setting === "Eliminar mi cuenta") {
+                          handleDeleteAccount();
                         }
                         handleCloseUserMenu();
                       }}
@@ -220,6 +229,14 @@ function Navbar() {
                   ))}
                 </Menu>
               </Box>
+              {openDeleteAccountModal && (
+                <ModalDeleteAccount
+                  openDialog={openDeleteAccountModal}
+                  handleClose={() => setOpenDeleteAccountModal(false)}
+                  handleDelete={handleDeleteAccount}
+                  email={userEmail || ""}
+                />
+              )}
             </>
           ) : (
             <Button

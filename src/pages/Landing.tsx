@@ -14,14 +14,13 @@ export default function Landing() {
                 ¿Quiénes somos?
               </Typography>
               <Typography variant="body1" className="about-us-text">
-              <p>
                 Gestor Verde es un equipo apasionado de innovadores y
                 profesionales dedicados que han unido fuerzas para dar vida a
                 CultivApp. Nuestra diversidad de habilidades y experiencias
                 converge en la creación de una plataforma revolucionaria para el
                 sector agrícola.
-              </p>
-              <p>
+              </Typography>
+              <Typography variant="body1" className="about-us-text">
                 Con un trasfondo en desarrollo de software, diseño de
                 experiencia de usuario, y conocimientos profundos en la gestión
                 agrícola, nos esforzamos por ofrecer una solución tecnológica
@@ -30,11 +29,10 @@ export default function Landing() {
                 excelencia, la sostenibilidad y el impacto positivo en la
                 industria, y nos enorgullece presentar CultivApp como la
                 culminación de nuestra dedicación y visión compartida.{" "}
-              </p>
-              <p>
+              </Typography>
+              <Typography variant="body1" className="about-us-text">
                 ¡Bienvenidos a la comunidad de CultivApp, donde la tecnología se
                 encuentra con la agricultura de manera innovadora!
-              </p>
               </Typography>
             </CardContent>
           </Card>
