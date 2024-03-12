@@ -1,5 +1,6 @@
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from '@mui/icons-material/Home';
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../features/auth/authSlice";
@@ -77,23 +78,23 @@ function Navbar() {
           sx={{ display: "flex", justifyContent: "space-between" }}
         >
           {/* TODO: agregar logo */}
-          <Typography
-            variant="h6"
-            noWrap
-            component={Link}
-            to="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".1rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Cultivapp
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: 7 }}>
+            <Typography
+              component={Link}
+              to="/"
+              variant="h5"
+              sx={{
+                color: 'inherit',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <HomeIcon sx={{ fontSize: '2rem', marginRight: '0.5rem' }} /> {/* Espacio entre el texto y el icono */}
+              Cultivapp
+              
+            </Typography>
+          </Box>
 
           {userEmail !== null && (
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
