@@ -37,13 +37,14 @@ const ModalDeleteAccount: React.FC<ModalDeleteAccountProps> = ({
     dispatch(logout());
     setSnackbarOpen(false);
     navigate("/signin");
+    handleClose();
   };
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        navigate("/");
+        navigate("/signin");
         return;
       }
 

@@ -75,7 +75,7 @@ function Navbar() {
         console.error("Error decoding token:", error);
       }
     }
-  }, []);
+  }, [openDeleteAccountModal]);
 
   return (
     <AppBar position="static">
