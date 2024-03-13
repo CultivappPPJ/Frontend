@@ -198,8 +198,11 @@ export default function EditTerrain() {
           setTerrain(data);
           // Rellenar el formulario con los datos existentes
           Object.keys(data).forEach((key) => {
-            setValue(key, data[key]);
+            if (key in data) {
+              setValue(key as keyof IFormInput, data[key]);
+            }
           });
+
           setFormLocked(true);
         } catch (error) {
           console.error(
@@ -227,7 +230,7 @@ export default function EditTerrain() {
 
   useEffect(() => {
     if (token === null) {
-      navigate("/");
+      navigate("/signin");
     }
   }, [token, status, navigate]);
 

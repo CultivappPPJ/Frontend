@@ -115,7 +115,7 @@ export default function MyTerrains() {
 
   useEffect(() => {
     if (token === null) {
-      navigate("/");
+      navigate("/signin");
     }
   }, [token, navigate]);
 
