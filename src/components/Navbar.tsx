@@ -1,5 +1,6 @@
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from '@mui/icons-material/Home';
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../features/auth/authSlice";
@@ -18,12 +19,14 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import ModalDeleteAccount from "./ModalDeleteAccount";
 
 const pages = [
   { title: "Mis Terrenos", path: "/my/terrain" },
   { title: "Agregar Terreno", path: "/crud" },
+  { title: "¿Quiénes somos?", path: "/landing" },
 ];
-const settings = ["Cerrar Sesión"];
+const settings = ["Cerrar Sesión", "Eliminar mi cuenta"];
 
 function Navbar() {
   const [userEmail, setUserEmail] = React.useState<string | null>(null);
@@ -33,6 +36,8 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
+  const [openDeleteAccountModal, setOpenDeleteAccountModal] =
+    React.useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -40,6 +45,10 @@ function Navbar() {
   const handleLogout = () => {
     dispatch(logout());
     navigate("/signin");
+  };
+
+  const handleDeleteAccount = () => {
+    setOpenDeleteAccountModal(true);
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -67,7 +76,7 @@ function Navbar() {
         console.error("Error decoding token:", error);
       }
     }
-  }, []);
+  }, [openDeleteAccountModal]);
 
   return (
     <AppBar position="static">
@@ -77,23 +86,23 @@ function Navbar() {
           sx={{ display: "flex", justifyContent: "space-between" }}
         >
           {/* TODO: agregar logo */}
-          <Typography
-            variant="h6"
-            noWrap
-            component={Link}
-            to="/"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".1rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            Cultivapp
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', mr: 7 }}>
+            <Typography
+              component={Link}
+              to="/"
+              variant="h5"
+              sx={{
+                color: 'inherit',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <HomeIcon sx={{ fontSize: '2rem', marginRight: '0.5rem' }} /> {/* Espacio entre el texto y el icono */}
+              Cultivapp
+              
+            </Typography>
+          </Box>
 
           {userEmail !== null && (
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -210,6 +219,8 @@ function Navbar() {
                       onClick={() => {
                         if (setting === "Cerrar Sesión") {
                           handleLogout();
+                        } else if (setting === "Eliminar mi cuenta") {
+                          handleDeleteAccount();
                         }
                         handleCloseUserMenu();
                       }}
@@ -219,6 +230,14 @@ function Navbar() {
                   ))}
                 </Menu>
               </Box>
+              {openDeleteAccountModal && (
+                <ModalDeleteAccount
+                  openDialog={openDeleteAccountModal}
+                  handleClose={() => setOpenDeleteAccountModal(false)}
+                  handleDelete={handleDeleteAccount}
+                  email={userEmail || ""}
+                />
+              )}
             </>
           ) : (
             <Button

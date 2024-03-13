@@ -10,6 +10,7 @@ import CrudTerrain from "./pages/crudTerrain/CrudTerrain";
 import MyTerrains from "./pages/crudTerrain/MyTerrains";
 import Layout from "./pages/Layout";
 import EditTerrain from "./pages/crudTerrain/EditTerrain";
+import Landing from "./pages/Landing";
 
 function App() {
   const dispatch = useDispatch();
@@ -26,6 +27,7 @@ function App() {
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/landing" element={<Landing />} />
           <Route path="/crud" element={<CrudTerrain />} />
           <Route path="/my/terrain" element={<MyTerrains />} />
           <Route path="/update/:id" element={<EditTerrain />} />

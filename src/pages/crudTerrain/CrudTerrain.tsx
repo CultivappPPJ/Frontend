@@ -173,7 +173,7 @@ export default function CrudTerrain() {
 
   useEffect(() => {
     if (token === null) {
-      navigate("/");
+      navigate("/signin");
     }
   }, [token, navigate]);
 
