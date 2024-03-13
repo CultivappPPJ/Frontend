@@ -23,6 +23,7 @@ import { jwtDecode } from "jwt-decode";
 export default function MyTerrains() {
   const [terrains, setTerrains] = useState<TerrainResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [paginationInfo, setPaginationInfo] = useState({
     currentPage: 0,
@@ -90,6 +91,7 @@ export default function MyTerrains() {
         currentPage: response.data?.pageNumber + 1,
         totalPages: response.data?.totalPages,
       });
+      setIsLoading(false);
     } catch (err) {
       setError("Error fetching data");
       console.error(err);
@@ -146,7 +148,15 @@ export default function MyTerrains() {
           marginY: "2rem",
         }}
       >
-        {terrains.length === 0 ? (
+        {isLoading ? (
+          <Box
+            sx={{
+              margin: "auto",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : terrains.length === 0 ? (
           <Typography
             variant="h4"
             sx={{ textAlign: "center", marginTop: "2rem" }}
