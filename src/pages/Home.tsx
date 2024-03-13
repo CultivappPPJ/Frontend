@@ -39,8 +39,8 @@ export default function Home() {
       const data = response.data;
       setTerrainsData(data.content); // Actualizar el estado con los datos obtenidos de la API
       setPaginationInfo({
-        currentPage: response.data.pageable.pageNumber + 1,
-        totalPages: response.data.totalPages,
+        currentPage: response.data?.pageNumber + 1,
+        totalPages: response.data?.totalPages,
       });
       setLoading(false);
     } catch (error) {
@@ -128,11 +128,11 @@ export default function Home() {
 
             {/* Modal */}
             <Dialog open={isModalOpen} onClose={handleCloseModal}>
-              <DialogTitle className="dialog-title">{`Cultivo de ${selectedTerrain?.plantType}`}</DialogTitle>
+              <DialogTitle className="dialog-title">{`Cultivo de ${selectedTerrain?.name}`}</DialogTitle>
               <DialogContent>
                 <CardMedia
                   component="img"
-                  alt={selectedTerrain?.plantType}
+                  alt={selectedTerrain?.name}
                   height="200px"
                   image={selectedTerrain?.photo}
                   className="card-media"
@@ -154,7 +154,10 @@ export default function Home() {
                     </span>
                   )}
                   <br />
-                  <span>Tipo cultivo:</span> {selectedTerrain?.plantType}
+                  <span>Tipo cultivos:</span>{" "}
+                  {selectedTerrain?.seedTypes
+                    .map((seed) => seed.name)
+                    .join(" - ")}
                   <br />
                   <br />
                   <span>Nombre del agricultor:</span>{" "}
