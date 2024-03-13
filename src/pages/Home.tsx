@@ -105,11 +105,11 @@ export default function Home() {
               >
                 {terrainsData.map((terrain) => (
                   <Grid item key={terrain.id} xs={12} md={6} lg={4}>
-                    <Card
-                      onClick={() => handleCardClick(terrain)}
-                      className="terrain-card"
-                    >
-                      <TerrainCard terrain={terrain} onCardClick={handleCardClick}/>
+                    <Card className="terrain-card">
+                      <TerrainCard
+                        terrain={terrain}
+                        onCardClick={handleCardClick}
+                      />
                     </Card>
                   </Grid>
                 ))}

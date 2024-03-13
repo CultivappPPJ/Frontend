@@ -31,10 +31,6 @@
   border-radius: 5px;
 }
 
-.terrain-card {
-  cursor: pointer;
-}
-
 .pagination {
   margin-top: 22px;
   display: flex;
