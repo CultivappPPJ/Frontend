@@ -22,21 +22,11 @@ import {
 import ModalDelete from "../../components/ModalDelete";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { TokenPayload } from "../../types";
+import { IFormInput, TokenPayload } from "../../types";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import ComboBox from "../../components/ComboBox";
-
-interface IFormInput {
-  fullName: string;
-  area: number;
-  soilType: "Arenoso" | "Mixto" | "Ácido" | "Calizo" | "Supresivo";
-  plantType: string;
-  photo: string;
-  remainingDays: number;
-  forSale: boolean;
-}
 
 const CenteredTableCell: React.FC<
   React.HTMLAttributes<HTMLTableCellElement>
@@ -84,6 +74,7 @@ export default function CrudTerrain() {
       ...data,
       email: userEmail,
       fullName: fullName,
+      seedTypeIds: [1, 2],
     };
 
     try {
@@ -113,7 +104,7 @@ export default function CrudTerrain() {
       setValue("fullName", terrain.fullName);
       setValue("area", terrain.area);
       setValue("soilType", terrain.soilType);
-      setValue("plantType", terrain.plantType);
+      setValue("seedTypeIds", terrain.seedTypeIds);
       setValue("photo", terrain.photo);
       setValue("remainingDays", terrain.remainingDays);
       setValue("forSale", terrain.forSale);
@@ -208,6 +199,29 @@ export default function CrudTerrain() {
       </Typography>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Controller
+              name="name"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: "Nombre es requerido",
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  disabled={formLocked}
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  fullWidth
+                  label="Nombre del terreno"
+                  error={!!error}
+                  helperText={error ? error.message : ""}
+                />
+              )}
+            />
+          </Grid>
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
               disabled={formLocked}
@@ -360,7 +374,7 @@ export default function CrudTerrain() {
                     </CenteredTableCell>
                     <CenteredTableCell>{terrain.area}</CenteredTableCell>
                     <CenteredTableCell>{terrain.soilType}</CenteredTableCell>
-                    <CenteredTableCell>{terrain.plantType}</CenteredTableCell>
+                    <CenteredTableCell>{terrain.seedTypeIds}</CenteredTableCell>
                     <CenteredTableCell>
                       {terrain.remainingDays}
                     </CenteredTableCell>

@@ -21,7 +21,7 @@ export default function ComboBox() {
         const plants: SeedType[] = response.data.map(
           (pt: { name: string; id: number }) => ({
             id: pt.id,
-            label: pt.name,
+            name: pt.name,
           })
         );
         setPlantTypes(plants);
@@ -34,7 +34,7 @@ export default function ComboBox() {
       disablePortal
       id="plant-type-combo-box"
       options={plantTypes}
-      getOptionLabel={(option: SeedType) => option.label}
+      getOptionLabel={(option: SeedType) => option.name}
       sx={{ width: 300 }}
       renderInput={(params) => (
         <TextField {...params} label="Tipo de Semilla" />

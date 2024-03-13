@@ -1,15 +1,10 @@
 import React from "react";
 import { Card, CardContent, Typography, CardMedia } from "@mui/material";
 import "../styles/styles.css";
+import { TerrainResponse } from "../types";
 
 interface TerrainCardProps {
-  terrain: {
-    id: number;
-    plantType: string;
-    photo: string;
-    fullName: string;
-    email: string;
-  };
+  terrain: TerrainResponse;
 }
 
 const TerrainCard: React.FC<TerrainCardProps> = ({ terrain }) => {
@@ -20,10 +15,10 @@ const TerrainCard: React.FC<TerrainCardProps> = ({ terrain }) => {
           <Typography
             variant="h6"
             className="card-title"
-          >{`Cultivo de ${terrain.plantType}`}</Typography>
+          >{`Cultivo de ${terrain.name}`}</Typography>
           <CardMedia
             component="img"
-            alt={terrain.plantType}
+            alt={terrain.name}
             image={terrain.photo}
             className="img"
           />
