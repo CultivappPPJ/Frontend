@@ -3,19 +3,11 @@ export interface SignInData {
   password: string;
 }
 
-export interface SignInResponse {
-  token: string;
-}
-
 export interface SignUpData {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-}
-
-export interface SignUpResponse {
-  token: string;
 }
 
 export interface BackendError {
@@ -35,43 +27,40 @@ export interface TokenPayload {
 }
 
 export interface Root {
-    content: TerrainResponse[]
-    pageable: Pageable
-    totalElements: number
-    totalPages: number
-    last: boolean
-    size: number
-    number: number
-    sort: Sort
-    numberOfElements: number
-    first: boolean
-    empty: boolean
-  }
+  content: TerrainResponse[]
+  pageNumber: number
+  pageSize: number
+  totalElements: number
+  totalPages: number
+  last: boolean
+}
   
 export interface TerrainResponse {
-    id: number
-    area: string
-    soilType: string
-    plantType: string
-    photo: string
-    email: string
-    remainingDays: number
-    forSale: boolean
-    fullName: string
-    location: string
+  id: number
+  name: string
+  area: string
+  soilType: string
+  photo: string
+  email: string
+  remainingDays: number
+  forSale: boolean
+  fullName: string
+  seedTypes: SeedType[]
 }
 
-export interface Pageable {
-    pageNumber: number
-    pageSize: number
-    sort: Sort
-    offset: number
-    unpaged: boolean
-    paged: boolean
+export interface SeedType {
+  id: number
+  name: string
 }
 
-export interface Sort {
-    empty: boolean
-    unsorted: boolean
-    sorted: boolean
+export interface IFormInput {
+  name: string;
+  area: number;
+  seedTypeIds: number[];
+  photo: string;
+  email: string;
+  remainingDays: number;
+  forSale: boolean;
+  fullName: string;
+  soilType: "Arenoso" | "Mixto" | "Ácido" | "Calizo" | "Supresivo";
 }
