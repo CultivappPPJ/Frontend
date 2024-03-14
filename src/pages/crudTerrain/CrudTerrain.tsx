@@ -26,7 +26,16 @@ import { IFormInput, TokenPayload } from "../../types";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import ComboBox from "../../components/ComboBox";
+
+interface IFormInput {
+  fullName: string;
+  area: number;
+  soilType: "Arenoso" | "Mixto" | "Ácido" | "Calizo" | "Supresivo";
+  plantType: string;
+  photo: string;
+  harvestDate: string;
+  forSale: boolean;
+}
 
 const CenteredTableCell: React.FC<
   React.HTMLAttributes<HTMLTableCellElement>
@@ -54,6 +63,7 @@ export default function CrudTerrain() {
   const { token, status } = useSelector((state: RootState) => state.auth);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const handleClickOpen = (terrainName: string) => {
     setOpenDialog(true);
@@ -74,7 +84,7 @@ export default function CrudTerrain() {
       ...data,
       email: userEmail,
       fullName: fullName,
-      seedTypeIds: [1, 2],
+      harvestDate: selectedDate || '', // Ensure we don't submit null for harvestDate
     };
 
     try {
@@ -106,7 +116,7 @@ export default function CrudTerrain() {
       setValue("soilType", terrain.soilType);
       setValue("seedTypeIds", terrain.seedTypeIds);
       setValue("photo", terrain.photo);
-      setValue("remainingDays", terrain.remainingDays);
+      setValue("harvestDate", terrain.harvestDate);
       setValue("forSale", terrain.forSale);
     }
   };
@@ -293,24 +303,28 @@ export default function CrudTerrain() {
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="Días restantes para la cosecha"
-              type="number"
-              variant="outlined"
-              fullWidth
-              {...register("remainingDays", {
-                required: "Este campo es obligatorio",
-                min: {
-                  value: 1,
-                  message: "El valor debe ser un número positivo",
-                },
-              })}
-              error={!!errors.remainingDays}
-              helperText={errors.remainingDays?.message}
-            />
-          </Grid>
+  <TextField
+    disabled={formLocked}
+    size="small"
+    label="Fecha de cosecha"
+    type="date"
+    variant="outlined"
+    fullWidth
+    {...register("harvestDate", {
+      required: "Este campo es obligatorio",
+      validate: {
+        futureDate: (value) => {
+          const currentDate = new Date().toISOString().split('T')[0];
+          return value > currentDate || "La fecha de cosecha debe ser posterior a la fecha actual";
+        },
+      },
+    })}
+    error={!!errors.harvestDate}
+    helperText={errors.harvestDate?.message}
+    InputLabelProps={{ shrink: true }}
+    placeholder=""
+  />
+</Grid>
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
               disabled={formLocked}
@@ -352,7 +366,7 @@ export default function CrudTerrain() {
                     <CenteredTableCell>Área en hectáreas</CenteredTableCell>
                     <CenteredTableCell>Tipo de Suelo</CenteredTableCell>
                     <CenteredTableCell>Tipo de Planta</CenteredTableCell>
-                    <CenteredTableCell>Días Restantes</CenteredTableCell>
+                    <CenteredTableCell>Fecha de Cosecha</CenteredTableCell>
                     <CenteredTableCell>Tipo de Venta</CenteredTableCell>
                     <CenteredTableCell>Acción</CenteredTableCell>
                   </TableRow>
@@ -374,10 +388,8 @@ export default function CrudTerrain() {
                     </CenteredTableCell>
                     <CenteredTableCell>{terrain.area}</CenteredTableCell>
                     <CenteredTableCell>{terrain.soilType}</CenteredTableCell>
-                    <CenteredTableCell>{terrain.seedTypeIds}</CenteredTableCell>
-                    <CenteredTableCell>
-                      {terrain.remainingDays}
-                    </CenteredTableCell>
+                    <CenteredTableCell>{terrain.plantType}</CenteredTableCell>
+                    <CenteredTableCell>{terrain.harvestDate}</CenteredTableCell>
                     <CenteredTableCell>{terrain.forSale}</CenteredTableCell>
                     <CenteredTableCell>
                       <Box
