@@ -58,6 +58,7 @@ export interface TerrainResponse {
     remainingDays: number
     forSale: boolean
     fullName: string
+    location: string
 }
 
 export interface Pageable {

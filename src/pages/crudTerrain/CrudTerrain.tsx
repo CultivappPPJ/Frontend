@@ -35,6 +35,7 @@ interface IFormInput {
   photo: string;
   remainingDays: number;
   forSale: boolean;
+  location: string;
 }
 
 const CenteredTableCell: React.FC<
@@ -62,7 +63,6 @@ export default function CrudTerrain() {
   const { token, status } = useSelector((state: RootState) => state.auth);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-
   const handleClickOpen = (terrainName: string) => {
     setOpenDialog(true);
     setSelectedTerrainName(terrainName);
@@ -115,6 +115,7 @@ export default function CrudTerrain() {
       setValue("photo", terrain.photo);
       setValue("remainingDays", terrain.remainingDays);
       setValue("forSale", terrain.forSale);
+      setValue("location", terrain.location);
     }
   };
 
@@ -313,6 +314,20 @@ export default function CrudTerrain() {
               <MenuItem value="false">No</MenuItem>
             </TextField>
           </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <TextField
+              disabled={formLocked}
+              size="small"
+              label="Location"
+              variant="outlined"
+              fullWidth
+              {...register("location", {
+                required: "Este campo es obligatorio",
+              })}
+              error={!!errors.location}
+              helperText={errors.location?.message}
+            />
+          </Grid>
           <Grid item xs={12}>
             <Button
               size="small"
@@ -338,6 +353,7 @@ export default function CrudTerrain() {
                     <CenteredTableCell>Tipo de Planta</CenteredTableCell>
                     <CenteredTableCell>Días Restantes</CenteredTableCell>
                     <CenteredTableCell>Tipo de Venta</CenteredTableCell>
+                    <CenteredTableCell>Ubicación</CenteredTableCell>
                     <CenteredTableCell>Acción</CenteredTableCell>
                   </TableRow>
                 </TableHead>
@@ -363,6 +379,7 @@ export default function CrudTerrain() {
                       {terrain.remainingDays}
                     </CenteredTableCell>
                     <CenteredTableCell>{terrain.forSale}</CenteredTableCell>
+                    <CenteredTableCell>{terrain.location}</CenteredTableCell>
                     <CenteredTableCell>
                       <Box
                         sx={{

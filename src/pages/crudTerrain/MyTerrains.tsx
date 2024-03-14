@@ -189,6 +189,10 @@ export default function MyTerrains() {
                     <span style={{ fontWeight: "bold" }}>En Venta:</span>{" "}
                     {terrain.forSale ? "Sí" : "No"}
                   </Typography>
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>Ubicación:</span>{" "}
+                    {terrain.location}
+                  </Typography>
                   <Box
                     sx={{
                       display: "flex",
