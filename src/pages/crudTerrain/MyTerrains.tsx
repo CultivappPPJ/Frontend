@@ -203,6 +203,10 @@ export default function MyTerrains() {
                       {terrain.forSale ? "Sí" : "No"}
                     </span>
                   </Typography>
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>Ubicación:</span>{" "}
+                    {terrain.location}
+                  </Typography>
                   <Box
                     sx={{
                       position: "absolute",
