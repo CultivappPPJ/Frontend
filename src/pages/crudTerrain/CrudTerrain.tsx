@@ -323,6 +323,20 @@ export default function CrudTerrain() {
               )}
             />
           </Grid>
+          <Grid item xs={12} sm={6} md={4} lg={3}>
+            <TextField
+              disabled={formLocked}
+              size="small"
+              label="Location"
+              variant="outlined"
+              fullWidth
+              {...register("location", {
+                required: "Este campo es obligatorio",
+              })}
+              error={!!errors.location}
+              helperText={errors.location?.message}
+            />
+          </Grid>
           <Grid item xs={12}>
             <Button
               type="submit"

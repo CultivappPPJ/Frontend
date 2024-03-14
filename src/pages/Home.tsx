@@ -164,6 +164,8 @@ export default function Home() {
                   {selectedTerrain?.fullName}
                   <br />
                   <span>Email de contacto:</span> {selectedTerrain?.email}
+                  <br />
+                  <span>Ubicación:</span> {selectedTerrain?.location}
                 </DialogContentText>
               </DialogContent>
               <DialogActions className="dialog-actions">
