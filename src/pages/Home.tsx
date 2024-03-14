@@ -39,8 +39,8 @@ export default function Home() {
       const data = response.data;
       setTerrainsData(data.content); // Actualizar el estado con los datos obtenidos de la API
       setPaginationInfo({
-        currentPage: response.data.pageable.pageNumber + 1,
-        totalPages: response.data.totalPages,
+        currentPage: response.data?.pageNumber + 1,
+        totalPages: response.data?.totalPages,
       });
       setLoading(false);
     } catch (error) {
@@ -79,7 +79,7 @@ export default function Home() {
         ) : (
           // El resto del contenido cuando los datos están cargados
           <>
-            <Typography variant="h6" className="welcome-message">
+            <Typography variant="h5" className="welcome-message">
               {terrainsData.length > 0
                 ? "¡Bienvenido a CultivApp! Cultivos disponibles para ventas:"
                 : "¡Bienvenido a CultivApp! Aún no hay cultivos a la venta"}
@@ -105,11 +105,11 @@ export default function Home() {
               >
                 {terrainsData.map((terrain) => (
                   <Grid item key={terrain.id} xs={12} md={6} lg={4}>
-                    <Card
-                      onClick={() => handleCardClick(terrain)}
-                      className="terrain-card"
-                    >
-                      <TerrainCard terrain={terrain} />
+                    <Card className="terrain-card">
+                      <TerrainCard
+                        terrain={terrain}
+                        onCardClick={handleCardClick}
+                      />
                     </Card>
                   </Grid>
                 ))}
@@ -128,11 +128,11 @@ export default function Home() {
 
             {/* Modal */}
             <Dialog open={isModalOpen} onClose={handleCloseModal}>
-              <DialogTitle className="dialog-title">{`Cultivo de ${selectedTerrain?.plantType}`}</DialogTitle>
+              <DialogTitle className="dialog-title">{`Cultivo de ${selectedTerrain?.name}`}</DialogTitle>
               <DialogContent>
                 <CardMedia
                   component="img"
-                  alt={selectedTerrain?.plantType}
+                  alt={selectedTerrain?.name}
                   height="200px"
                   image={selectedTerrain?.photo}
                   className="card-media"
@@ -154,7 +154,10 @@ export default function Home() {
                     </span>
                   )}
                   <br />
-                  <span>Tipo cultivo:</span> {selectedTerrain?.plantType}
+                  <span>Tipo cultivos:</span>{" "}
+                  {selectedTerrain?.seedTypes
+                    .map((seed) => seed.name)
+                    .join(" - ")}
                   <br />
                   <br />
                   <span>Nombre del agricultor:</span>{" "}

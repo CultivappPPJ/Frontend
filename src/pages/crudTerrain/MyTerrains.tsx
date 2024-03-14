@@ -23,6 +23,7 @@ import { jwtDecode } from "jwt-decode";
 export default function MyTerrains() {
   const [terrains, setTerrains] = useState<TerrainResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [paginationInfo, setPaginationInfo] = useState({
     currentPage: 0,
@@ -87,9 +88,10 @@ export default function MyTerrains() {
       );
       setTerrains(response.data.content);
       setPaginationInfo({
-        currentPage: response.data.pageable.pageNumber + 1,
-        totalPages: response.data.totalPages,
+        currentPage: response.data?.pageNumber + 1,
+        totalPages: response.data?.totalPages,
       });
+      setIsLoading(false);
     } catch (err) {
       setError("Error fetching data");
       console.error(err);
@@ -115,7 +117,7 @@ export default function MyTerrains() {
 
   useEffect(() => {
     if (token === null) {
-      navigate("/");
+      navigate("/signin");
     }
   }, [token, navigate]);
 
@@ -146,7 +148,15 @@ export default function MyTerrains() {
           marginY: "2rem",
         }}
       >
-        {terrains.length === 0 ? (
+        {isLoading ? (
+          <Box
+            sx={{
+              margin: "auto",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : terrains.length === 0 ? (
           <Typography
             variant="h4"
             sx={{ textAlign: "center", marginTop: "2rem" }}
@@ -157,14 +167,14 @@ export default function MyTerrains() {
           terrains.map((terrain) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={terrain.id}>
               <Card>
-                <CardContent>
+                <CardContent sx={{ minHeight: "550px", position: "relative" }}>
                   <Typography
                     variant="h6"
                     style={{ marginBottom: "20px" }}
-                  >{`Cultivo de ${terrain.plantType}`}</Typography>
+                  >{`Cultivo de ${terrain.name}`}</Typography>
                   <CardMedia
                     component="img"
-                    alt={terrain.plantType}
+                    alt={terrain.name}
                     height="200px"
                     image={terrain.photo}
                     style={{ marginBottom: "20px" }}
@@ -182,18 +192,25 @@ export default function MyTerrains() {
                     {terrain.area} hectareas
                   </Typography>
                   <Typography>
-                    <span style={{ fontWeight: "bold" }}>Tipo de Cultivo:</span>{" "}
-                    {terrain.plantType}
+                    <span style={{ fontWeight: "bold" }}>
+                      Tipos de Cultivos:
+                    </span>{" "}
+                    {terrain.seedTypes.map((seed) => seed.name).join(" - ")}
                   </Typography>
                   <Typography>
                     <span style={{ fontWeight: "bold" }}>En Venta:</span>{" "}
-                    {terrain.forSale ? "Sí" : "No"}
+                    <span style={{ color: terrain.forSale ? "green" : "red" }}>
+                      {terrain.forSale ? "Sí" : "No"}
+                    </span>
                   </Typography>
                   <Box
                     sx={{
+                      position: "absolute",
+                      bottom: "20px",
                       display: "flex",
                       justifyContent: "space-between",
                       marginTop: "10px",
+                      width: "90%",
                     }}
                   >
                     <Button
@@ -208,9 +225,7 @@ export default function MyTerrains() {
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() =>
-                        handleClickOpen(terrain.id, terrain.plantType)
-                      }
+                      onClick={() => handleClickOpen(terrain.id, terrain.name)}
                       startIcon={<DeleteIcon />}
                     >
                       Eliminar

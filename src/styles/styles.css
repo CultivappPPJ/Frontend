@@ -1,8 +1,9 @@
 .welcome-message {
   margin-top: 30px !important;
-  margin-bottom: 30px !important;
+  margin-bottom: 25px !important;
   text-align: center;
   font-weight: normal !important;
+  font-size: 1.2rem !important;;
 }
 
 .available-crops {
@@ -25,17 +26,13 @@
 .img {
   margin-top: 15px;
   margin-bottom: 20px;
-  max-height: 250px;
+  max-height: 180px;
   aspect-ratio: 16/9;
   border-radius: 5px;
 }
 
-.terrain-card {
-  cursor: pointer;
-}
-
 .pagination {
-  margin-top: 15px;
+  margin-top: 22px;
   display: flex;
   justify-content: center;
   padding-bottom: 1rem;
@@ -81,6 +78,7 @@ Button {
   margin-bottom: 15px;
   text-align: center;
   font-weight: normal !important;
+  font-size: 1.2rem !important;;
 }
 
 #handle-add-terrain {
@@ -96,3 +94,61 @@ Button {
   display: flex;
   align-items: center;
 }
+
+.info-button {
+  display: block !important;
+  margin: 0 auto !important;
+  margin-top: 20px !important;
+  font-size: 0.8rem !important; 
+  padding: 4px 8px !important;
+}
+
+.about-us-title {
+  text-align: center;
+  margin-bottom: 35px !important; 
+  margin-top: 0px !important; 
+  color: white;
+}
+
+.about-us-text {
+  text-align: justify;
+  font-size: larger; 
+  color: white;
+}
+
+.about-us-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.custom-card {
+  background-color: #dcedc8;
+  border-radius: 16px;
+  padding: 12px;
+  margin-top: 35px;
+  width: auto;
+  height: auto;
+  background-color: #0E402D !important;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; 
+  width: 100%;
+}
+
+.logo-image {
+  width: 100%;
+  max-width: 400px; 
+  margin-top: 80px;
+  margin-left: 150px;
+  margin-right: auto;
+  display: block;
+  border-radius: 5px;
+}
+
