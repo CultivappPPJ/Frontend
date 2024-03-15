@@ -42,10 +42,11 @@ export interface TerrainResponse {
   soilType: string
   photo: string
   email: string
-  remainingDays: number
+  remainingDays: string
   forSale: boolean
   fullName: string
   seedTypes: SeedType[]
+  location: string
 }
 
 export interface SeedType {
@@ -59,8 +60,9 @@ export interface IFormInput {
   seedTypeIds: number[];
   photo: string;
   email: string;
-  remainingDays: number;
+  remainingDays: string;
   forSale: boolean;
   fullName: string;
   soilType: "Arenoso" | "Mixto" | "Ácido" | "Calizo" | "Supresivo";
+  location: string;
 }

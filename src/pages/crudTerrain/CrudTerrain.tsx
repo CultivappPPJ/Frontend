@@ -57,23 +57,12 @@ export default function CrudTerrain() {
       .catch((error) => console.error("There was an error!", error));
   }, [token]);
 
-  const addSeedType = () => {
-    setSeedTypeSelections((prevSelections) => {
-      if (prevSelections.length < availableSeedTypes.length) {
-        return [...prevSelections, {}]; // Asegurarse de que se agrega un objeto vacío o con estructura esperada
-      } else {
-        alert("No puedes agregar más tipos de semillas.");
-        return prevSelections;
-      }
-    });
-  };
-
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const seedTypeIds = data.seedTypeIds.map((seedType) => seedType.id);
 
     const terrainData = {
       ...data,
-      seedTypeIds, // Usar el array transformado
+      seedTypeIds,
       email: userEmail,
       fullName: fullName,
     };
@@ -121,6 +110,12 @@ export default function CrudTerrain() {
     }
   }, [token, navigate]);
 
+  useEffect(() => {
+    if (availableSeedTypes.length > 0 && fields.length === 0) {
+      append({ id: availableSeedTypes[0].id });
+    }
+  }, [append, availableSeedTypes, fields.length]);
+
   if (status !== "idle") {
     return (
       <Box
@@ -135,6 +130,14 @@ export default function CrudTerrain() {
       </Box>
     );
   }
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const renderSeedTypeOption = (seedType, selectedValue) => {
     return (
@@ -152,8 +155,14 @@ export default function CrudTerrain() {
         Agregar Terreno
       </Typography>
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+        <Grid
+          container
+          spacing={3}
+          justifyContent="center"
+          alignItems="center"
+          direction="column"
+        >
+          <Grid item xs={12}>
             <Controller
               name="name"
               control={control}
@@ -228,9 +237,9 @@ export default function CrudTerrain() {
             {fields.map((item, index) => (
               <Grid item xs={12} md={6} key={item.id}>
                 <Controller
-                  name={`seedTypeIds.${index}.id`} // Asegúrate de estructurar el nombre correctamente
+                  name={`seedTypeIds.${index}.id`}
                   control={control}
-                  defaultValue={item.id} // Define un valor predeterminado si es necesario
+                  defaultValue={item.id}
                   render={({ field }) => (
                     <Box display="flex" alignItems="center">
                       <TextField
@@ -239,7 +248,7 @@ export default function CrudTerrain() {
                         margin="normal"
                         variant="outlined"
                         fullWidth
-                        label="Tipo de Semilla"
+                        label="Tipo de Cultivo"
                         value={field.value || ""}
                         onChange={(e) => field.onChange(e.target.value)}
                       >
@@ -260,10 +269,16 @@ export default function CrudTerrain() {
                 />
               </Grid>
             ))}
-
-            <Button variant="contained" onClick={() => append({ id: null })}>
-              + Añadir Semilla
-            </Button>
+            {fields.length > 0 && (
+              <Button
+                variant="contained"
+                onClick={() =>
+                  append({ id: availableSeedTypes[0]?.id || null })
+                }
+              >
+                + Añadir Cultivo
+              </Button>
+            )}
 
             <Controller
               name="photo"
@@ -286,16 +301,25 @@ export default function CrudTerrain() {
             <Controller
               name="remainingDays"
               control={control}
-              defaultValue={1}
-              rules={{ required: "Este campo es obligatorio" }}
+              rules={{
+                required: "Este campo es obligatorio",
+                validate: {
+                  isFutureDate: (value) =>
+                    value >= getCurrentDate() ||
+                    "La fecha de cosecha no puede ser un día anterior a la fecha actual.",
+                },
+              }}
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  type="number"
+                  type="date"
                   margin="normal"
                   variant="outlined"
                   fullWidth
-                  label="Días restantes para la cosecha"
+                  label="Fecha de cosecha"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                   error={!!error}
                   helperText={error ? error.message : null}
                 />
@@ -322,19 +346,23 @@ export default function CrudTerrain() {
                 </TextField>
               )}
             />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="Location"
-              variant="outlined"
-              fullWidth
-              {...register("location", {
-                required: "Este campo es obligatorio",
-              })}
-              error={!!errors.location}
-              helperText={errors.location?.message}
+            <Controller
+              name="location"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Ubicación es requerido" }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  fullWidth
+                  label="Ubicación del terreno"
+                  error={!!error}
+                  helperText={error ? error.message : ""}
+                />
+              )}
             />
           </Grid>
           <Grid item xs={12}>

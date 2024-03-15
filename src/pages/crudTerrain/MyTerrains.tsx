@@ -157,12 +157,17 @@ export default function MyTerrains() {
             <CircularProgress />
           </Box>
         ) : terrains.length === 0 ? (
-          <Typography
-            variant="h4"
-            sx={{ textAlign: "center", marginTop: "2rem" }}
-          >
-            No hay terrenos disponibles
-          </Typography>
+          <Box sx={{ display: "flex", gap: "2rem", alignItems: "flex-end" }}>
+            <Typography
+              variant="h4"
+              sx={{ textAlign: "center", marginTop: "2rem" }}
+            >
+              No hay terrenos disponibles
+            </Typography>
+            <Button variant="contained" component={Link} to={"/crud"}>
+              Agregar Terreno
+            </Button>
+          </Box>
         ) : (
           terrains.map((terrain) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={terrain.id}>
@@ -206,6 +211,13 @@ export default function MyTerrains() {
                   <Typography>
                     <span style={{ fontWeight: "bold" }}>Ubicación:</span>{" "}
                     {terrain.location}
+                  </Typography>
+                  <Typography>
+                    <span style={{ fontWeight: "bold" }}>
+                      Fecha de cosecha:
+                    </span>{" "}
+                    {terrain?.remainingDays &&
+                      terrain.remainingDays.split("-").reverse().join("/")}
                   </Typography>
                   <Box
                     sx={{

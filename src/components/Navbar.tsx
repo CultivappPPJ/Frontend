@@ -1,6 +1,6 @@
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from "@mui/icons-material/Home";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../features/auth/authSlice";
@@ -12,6 +12,7 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -20,13 +21,18 @@ import {
   Typography,
 } from "@mui/material";
 import ModalDeleteAccount from "./ModalDeleteAccount";
+import LogoutIcon from "@mui/icons-material/Logout";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const pages = [
   { title: "Mis Terrenos", path: "/my/terrain" },
   { title: "Agregar Terreno", path: "/crud" },
   { title: "¿Quiénes somos?", path: "/landing" },
 ];
-const settings = ["Cerrar Sesión", "Eliminar mi cuenta"];
+const settings = [
+  { title: "Cerrar Sesión", icon: <LogoutIcon /> },
+  { title: "Eliminar mi cuenta", icon: <DeleteIcon /> },
+];
 
 function Navbar() {
   const [userEmail, setUserEmail] = React.useState<string | null>(null);
@@ -86,21 +92,21 @@ function Navbar() {
           sx={{ display: "flex", justifyContent: "space-between" }}
         >
           {/* TODO: agregar logo */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mr: 7 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mr: 7 }}>
             <Typography
               component={Link}
               to="/"
               variant="h5"
               sx={{
-                color: 'inherit',
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center'
+                color: "inherit",
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              <HomeIcon sx={{ fontSize: '2rem', marginRight: '0.5rem' }} /> {/* Espacio entre el texto y el icono */}
+              <HomeIcon sx={{ fontSize: "2rem", marginRight: "0.5rem" }} />{" "}
+              {/* Espacio entre el texto y el icono */}
               Cultivapp
-              
             </Typography>
           </Box>
 
@@ -213,20 +219,26 @@ function Navbar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem
-                      key={setting}
-                      onClick={() => {
-                        if (setting === "Cerrar Sesión") {
-                          handleLogout();
-                        } else if (setting === "Eliminar mi cuenta") {
-                          handleDeleteAccount();
-                        }
-                        handleCloseUserMenu();
-                      }}
-                    >
-                      <Typography textAlign="center">{setting}</Typography>
-                    </MenuItem>
+                  {settings.map((setting, index) => (
+                    <>
+                      <MenuItem
+                        key={setting.title}
+                        onClick={() => {
+                          if (setting.title === "Cerrar Sesión") {
+                            handleLogout();
+                          } else if (setting.title === "Eliminar mi cuenta") {
+                            handleDeleteAccount();
+                          }
+                          handleCloseUserMenu();
+                        }}
+                      >
+                        {setting.icon}
+                        <Typography textAlign="center" sx={{ ml: 1 }}>
+                          {setting.title}
+                        </Typography>
+                      </MenuItem>
+                      {index < settings.length - 1 && <Divider />}
+                    </>
                   ))}
                 </Menu>
               </Box>

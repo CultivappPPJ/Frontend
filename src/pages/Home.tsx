@@ -139,20 +139,16 @@ export default function Home() {
                 />
                 <DialogContentText>
                   <span>Área de cultivo:</span> {selectedTerrain?.area}{" "}
-                  hectareas
+                  hectáreas
                   <br />
                   <span>Tipo de suelo:</span> {selectedTerrain?.soilType}
                   <br />
-                  <span>Días restantes:</span>{" "}
-                  {selectedTerrain?.remainingDays === 0 ? (
-                    <span className="ready-for-sale">
-                      0 (listo para la venta)
-                    </span>
-                  ) : (
-                    <span id="remaining-days">
-                      {selectedTerrain?.remainingDays}
-                    </span>
-                  )}
+                  <span>Fecha de la cosecha:</span>{" "}
+                  {selectedTerrain?.remainingDays &&
+                    selectedTerrain.remainingDays
+                      .split("-")
+                      .reverse()
+                      .join("/")}
                   <br />
                   <span>Tipo cultivos:</span>{" "}
                   {selectedTerrain?.seedTypes
