@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import {
+  useForm,
+  SubmitHandler,
+  Controller,
+  useFieldArray,
+} from "react-hook-form";
 import {
   Button,
   TextField,
@@ -7,85 +12,59 @@ import {
   Grid,
   MenuItem,
   Typography,
-  TableContainer,
-  Table,
-  TableHead,
-  Paper,
-  TableRow,
-  TableCell,
-  TableBody,
   Box,
   CircularProgress,
   Snackbar,
   Alert,
+  IconButton,
 } from "@mui/material";
-import ModalDelete from "../../components/ModalDelete";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { IFormInput, TokenPayload } from "../../types";
+import { IFormInput, SeedType, TokenPayload } from "../../types";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-
-interface IFormInput {
-  fullName: string;
-  area: number;
-  soilType: "Arenoso" | "Mixto" | "Ácido" | "Calizo" | "Supresivo";
-  plantType: string;
-  photo: string;
-  harvestDate: string;
-  forSale: boolean;
-  location: string;
-}
-
-const CenteredTableCell: React.FC<
-  React.HTMLAttributes<HTMLTableCellElement>
-> = (props) => <TableCell {...props} sx={{ textAlign: "center" }} />;
+import DeleteIcon from "@mui/icons-material/Delete";
+import { jwtDecode } from "jwt-decode";
 
 export default function CrudTerrain() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
+  const { handleSubmit, reset, control } = useForm<IFormInput>();
+  const { fields, append, remove } = useFieldArray({
     control,
-    setValue,
-  } = useForm<IFormInput>();
-  const [terrain, setTerrain] = useState<IFormInput | null>(null);
-  const [selectedSquares, setSelectedSquares] = useState<Set<number>>(
-    new Set()
-  );
-  const [formLocked, setFormLocked] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedTerrainName, setSelectedTerrainName] = useState<string>("");
+    name: "seedTypeIds",
+  });
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string | null>(null);
   const { token, status } = useSelector((state: RootState) => state.auth);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
+  const [availableSeedTypes, setAvailableSeedTypes] = useState<SeedType[]>([]);
+  const [seedTypeSelections, setSeedTypeSelections] = useState<SeedType[]>([]);
 
-  const handleClickOpen = (terrainName: string) => {
-    setOpenDialog(true);
-    setSelectedTerrainName(terrainName);
-  };
-
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/seed-types", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setAvailableSeedTypes(response.data);
+        if (response.data.length > 0) {
+          setSeedTypeSelections([response.data[0]]);
+        }
+      })
+      .catch((error) => console.error("There was an error!", error));
+  }, [token]);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    setTerrain(data);
-    setFormLocked(true);
-  };
+    const seedTypeIds = data.seedTypeIds.map((seedType) => seedType.id);
 
-  const handleAdd = async (data: IFormInput) => {
     const terrainData = {
       ...data,
+      seedTypeIds,
       email: userEmail,
       fullName: fullName,
-      harvestDate: selectedDate || '', // Ensure we don't submit null for harvestDate
     };
 
     try {
@@ -98,78 +77,20 @@ export default function CrudTerrain() {
           },
         }
       );
-      console.log(response.data);
+      console.log(response);
       setSnackbarMessage("Agregado con éxito");
       setSnackbarOpen(true);
-      setTerrain(null);
       reset();
-      setFormLocked(false);
     } catch (error) {
       console.error("Ocurrió un error al agregar el terreno: ", error);
     }
   };
 
-  const handleModify = () => {
-    if (terrain) {
-      setFormLocked(false);
-      setValue("fullName", terrain.fullName);
-      setValue("area", terrain.area);
-      setValue("soilType", terrain.soilType);
-      setValue("seedTypeIds", terrain.seedTypeIds);
-      setValue("photo", terrain.photo);
-      setValue("harvestDate", terrain.harvestDate);
-      setValue("forSale", terrain.forSale);
-      setValue("location", terrain.location);
+  useEffect(() => {
+    if (availableSeedTypes.length > 0 && seedTypeSelections.length === 0) {
+      setSeedTypeSelections([availableSeedTypes[0]]);
     }
-  };
-
-  const handleDelete = () => {
-    setTerrain(null);
-    reset();
-    setFormLocked(false);
-    setOpenDialog(false);
-  };
-
-  const handleSquareClick = (index: number) => {
-    const updatedSelection = new Set(selectedSquares);
-
-    if (updatedSelection.has(index)) {
-      updatedSelection.delete(index);
-    } else {
-      updatedSelection.add(index);
-    }
-
-    setSelectedSquares(updatedSelection);
-  };
-
-  const generateVisualGrid = (
-    area: number,
-    selectedSquares: Set<number>,
-    handleSquareClick: (index: number) => void
-  ) => {
-    const squares = Array.from({ length: area }, (_, index) => (
-      <Grid item key={index}>
-        <div
-          onClick={() => handleSquareClick(index)}
-          style={{
-            width: "35px",
-            height: "35px",
-            backgroundColor: selectedSquares.has(index)
-              ? "lightcoral"
-              : "lightblue",
-            border: "1px solid #ccc",
-            cursor: "pointer",
-          }}
-        />
-      </Grid>
-    ));
-
-    return (
-      <Grid container spacing={1}>
-        {squares}
-      </Grid>
-    );
-  };
+  }, [availableSeedTypes, seedTypeSelections]);
 
   useEffect(() => {
     if (token) {
@@ -189,6 +110,12 @@ export default function CrudTerrain() {
     }
   }, [token, navigate]);
 
+  useEffect(() => {
+    if (availableSeedTypes.length > 0 && fields.length === 0) {
+      append({ id: availableSeedTypes[0].id });
+    }
+  }, [append, availableSeedTypes, fields.length]);
+
   if (status !== "idle") {
     return (
       <Box
@@ -204,25 +131,46 @@ export default function CrudTerrain() {
     );
   }
 
+  const getCurrentDate = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const renderSeedTypeOption = (seedType, selectedValue) => {
+    return (
+      <MenuItem key={seedType.id} value={seedType.id}>
+        {selectedValue?.id === seedType.id
+          ? `${seedType.name} (Seleccionado)`
+          : seedType.name}
+      </MenuItem>
+    );
+  };
+
   return (
-    <Container maxWidth="xl" sx={{ mb: "4rem" }}>
-      <Typography variant="h5" sx={{ py: "1rem", textAlign: "center" }}>
+    <Container maxWidth="lg" sx={{ my: 4 }}>
+      <Typography variant="h4" align="center" gutterBottom>
         Agregar Terreno
       </Typography>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Grid
+          container
+          spacing={3}
+          justifyContent="center"
+          alignItems="center"
+          direction="column"
+        >
+          <Grid item xs={12}>
             <Controller
               name="name"
               control={control}
               defaultValue=""
-              rules={{
-                required: "Nombre es requerido",
-              }}
+              rules={{ required: "Nombre es requerido" }}
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  disabled={formLocked}
                   margin="normal"
                   required
                   variant="outlined"
@@ -233,16 +181,11 @@ export default function CrudTerrain() {
                 />
               )}
             />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="Área en hectáreas"
-              type="number"
-              variant="outlined"
-              fullWidth
-              {...register("area", {
+            <Controller
+              name="area"
+              control={control}
+              defaultValue={1}
+              rules={{
                 required: "Este campo es obligatorio",
                 min: {
                   value: 1,
@@ -252,47 +195,99 @@ export default function CrudTerrain() {
                   value: 50,
                   message: "El valor debe ser menor a 50",
                 },
-              })}
-              error={!!errors.area}
-              helperText={errors.area?.message}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="Tipo de Suelo"
-              select
-              variant="outlined"
-              fullWidth
-              {...register("soilType", {
-                required: "Este campo es obligatorio",
-              })}
-              error={!!errors.soilType}
-              helperText={errors.soilType?.message}
-            >
-              <MenuItem value="Arenoso">Arenoso</MenuItem>
-              <MenuItem value="Mixto">Mixto</MenuItem>
-              <MenuItem value="Ácido">Ácido</MenuItem>
-              <MenuItem value="Calizo">Calizo</MenuItem>
-              <MenuItem value="Supresivo">Supresivo</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <ComboBox />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <Controller
-              name="photo"
-              control={control}
-              defaultValue=""
-              rules={{
-                required: "URL de la imagen es requerido",
               }}
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  disabled={formLocked}
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  fullWidth
+                  label="Área en hectáreas"
+                  type="number"
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                />
+              )}
+            />
+            <Controller
+              name="soilType"
+              control={control}
+              defaultValue="Mixto"
+              rules={{ required: "Este campo es obligatorio" }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  select
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                  label="Tipo de Suelo"
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                >
+                  <MenuItem value="Arenoso">Arenoso</MenuItem>
+                  <MenuItem value="Mixto">Mixto</MenuItem>
+                  <MenuItem value="Ácido">Ácido</MenuItem>
+                  <MenuItem value="Calizo">Calizo</MenuItem>
+                  <MenuItem value="Supresivo">Supresivo</MenuItem>
+                </TextField>
+              )}
+            />
+            {fields.map((item, index) => (
+              <Grid item xs={12} md={6} key={item.id}>
+                <Controller
+                  name={`seedTypeIds.${index}.id`}
+                  control={control}
+                  defaultValue={item.id}
+                  render={({ field }) => (
+                    <Box display="flex" alignItems="center">
+                      <TextField
+                        {...field}
+                        select
+                        margin="normal"
+                        variant="outlined"
+                        fullWidth
+                        label="Tipo de Cultivo"
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      >
+                        {availableSeedTypes.map((seedType) => (
+                          <MenuItem key={seedType.id} value={seedType.id}>
+                            {seedType.name}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <IconButton
+                        aria-label="delete"
+                        onClick={() => remove(index)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  )}
+                />
+              </Grid>
+            ))}
+            {fields.length > 0 && (
+              <Button
+                variant="contained"
+                onClick={() =>
+                  append({ id: availableSeedTypes[0]?.id || null })
+                }
+              >
+                + Añadir Cultivo
+              </Button>
+            )}
+
+            <Controller
+              name="photo"
+              control={control}
+              defaultValue=""
+              rules={{ required: "URL de la imagen es requerido" }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
                   margin="normal"
                   required
                   variant="outlined"
@@ -303,174 +298,92 @@ export default function CrudTerrain() {
                 />
               )}
             />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-  <TextField
-    disabled={formLocked}
-    size="small"
-    label="Fecha de cosecha"
-    type="date"
-    variant="outlined"
-    fullWidth
-    {...register("harvestDate", {
-      required: "Este campo es obligatorio",
-      validate: {
-        futureDate: (value) => {
-          const currentDate = new Date().toISOString().split('T')[0];
-          return value > currentDate || "La fecha de cosecha debe ser posterior a la fecha actual";
-        },
-      },
-    })}
-    error={!!errors.harvestDate}
-    helperText={errors.harvestDate?.message}
-    InputLabelProps={{ shrink: true }}
-    placeholder=""
-  />
-</Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="En Venta"
-              select
-              variant="outlined"
-              fullWidth
-              {...register("forSale", {
+            <Controller
+              name="remainingDays"
+              control={control}
+              rules={{
                 required: "Este campo es obligatorio",
-              })}
-              error={!!errors.forSale}
-              helperText={errors.forSale?.message}
-            >
-              <MenuItem value="true">Si</MenuItem>
-              <MenuItem value="false">No</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              disabled={formLocked}
-              size="small"
-              label="Location"
-              variant="outlined"
-              fullWidth
-              {...register("location", {
-                required: "Este campo es obligatorio",
-              })}
-              error={!!errors.location}
-              helperText={errors.location?.message}
+                validate: {
+                  isFutureDate: (value) =>
+                    value >= getCurrentDate() ||
+                    "La fecha de cosecha no puede ser un día anterior a la fecha actual.",
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  type="date"
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                  label="Fecha de cosecha"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                />
+              )}
+            />
+            <Controller
+              name="forSale"
+              control={control}
+              defaultValue={true}
+              rules={{ required: "Este campo es obligatorio" }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  select
+                  margin="normal"
+                  variant="outlined"
+                  fullWidth
+                  label="En Venta"
+                  error={!!error}
+                  helperText={error ? error.message : null}
+                >
+                  <MenuItem value="true">Sí</MenuItem>
+                  <MenuItem value="false">No</MenuItem>
+                </TextField>
+              )}
+            />
+            <Controller
+              name="location"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Ubicación es requerido" }}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  variant="outlined"
+                  fullWidth
+                  label="Ubicación del terreno"
+                  error={!!error}
+                  helperText={error ? error.message : ""}
+                />
+              )}
             />
           </Grid>
           <Grid item xs={12}>
             <Button
-              size="small"
               type="submit"
               variant="contained"
               color="primary"
-              disabled={formLocked}
+              size="large"
             >
-              Agregar a la vista
+              Agregar Terreno
             </Button>
           </Grid>
-          {terrain && (
-            <TableContainer
-              component={Paper}
-              sx={{ maxWidth: "xl", mt: "2rem", mx: "1rem", px: "1rem" }}
-            >
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <CenteredTableCell>Imagen</CenteredTableCell>
-                    <CenteredTableCell>Área en hectáreas</CenteredTableCell>
-                    <CenteredTableCell>Tipo de Suelo</CenteredTableCell>
-                    <CenteredTableCell>Tipo de Planta</CenteredTableCell>
-                    <CenteredTableCell>Fecha de Cosecha</CenteredTableCell>
-                    <CenteredTableCell>Tipo de Venta</CenteredTableCell>
-                    <CenteredTableCell>Ubicación</CenteredTableCell>
-                    <CenteredTableCell>Acción</CenteredTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <CenteredTableCell>
-                      {terrain.photo && (
-                        <img
-                          src={terrain.photo}
-                          alt={`Imagen de ${terrain.fullName}`}
-                          style={{
-                            width: "250px",
-                            height: "200px",
-                            borderRadius: "5px",
-                          }}
-                        />
-                      )}
-                    </CenteredTableCell>
-                    <CenteredTableCell>{terrain.area}</CenteredTableCell>
-                    <CenteredTableCell>{terrain.soilType}</CenteredTableCell>
-                    <CenteredTableCell>{terrain.plantType}</CenteredTableCell>
-                    <CenteredTableCell>{terrain.harvestDate}</CenteredTableCell>
-                    <CenteredTableCell>{terrain.forSale}</CenteredTableCell>
-                    <CenteredTableCell>{terrain.location}</CenteredTableCell>
-                    <CenteredTableCell>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "1rem",
-                        }}
-                      >
-                        <Button
-                          size="small"
-                          onClick={() => handleAdd(terrain)}
-                          variant="outlined"
-                          color="primary"
-                        >
-                          Agregar Terreno
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={handleModify}
-                          variant="outlined"
-                          color="warning"
-                        >
-                          Modificar Terreno
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={() => handleClickOpen(terrain.fullName)}
-                          variant="outlined"
-                          color="error"
-                        >
-                          Eliminar Terreno
-                        </Button>
-                      </Box>
-                    </CenteredTableCell>
-                  </TableRow>
-                  <TableHead>
-                    <CenteredTableCell>
-                      Área en hectáreas a plantar
-                    </CenteredTableCell>
-                  </TableHead>
-                  <TableRow>
-                    <CenteredTableCell>
-                      {generateVisualGrid(
-                        terrain.area,
-                        selectedSquares,
-                        (squareIndex) => handleSquareClick(squareIndex)
-                      )}
-                    </CenteredTableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
         </Grid>
-      </Box>
+      </form>
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={5000}
         onClose={() => setSnackbarOpen(false)}
       >
         <Alert
-          onClose={handleClose}
+          onClose={() => setSnackbarOpen(false)}
           severity="success"
           variant="filled"
           sx={{ width: "100%" }}
@@ -478,12 +391,6 @@ export default function CrudTerrain() {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <ModalDelete
-        openDialog={openDialog}
-        handleClose={handleClose}
-        handleDelete={handleDelete}
-        terrainName={selectedTerrainName}
-      />
     </Container>
   );
 }
