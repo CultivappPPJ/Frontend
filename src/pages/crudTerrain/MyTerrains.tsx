@@ -19,6 +19,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { jwtDecode } from "jwt-decode";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function MyTerrains() {
   const [terrains, setTerrains] = useState<TerrainResponse[]>([]);
@@ -197,28 +198,26 @@ export default function MyTerrains() {
                     {terrain.area} hectareas
                   </Typography>
                   <Typography>
-                    <span style={{ fontWeight: "bold" }}>
-                      Tipos de Cultivos:
-                    </span>{" "}
-                    {terrain.seedTypes.map((seed) => seed.name).join(" - ")}
-                  </Typography>
-                  <Typography>
-                    <span style={{ fontWeight: "bold" }}>En Venta:</span>{" "}
-                    <span style={{ color: terrain.forSale ? "green" : "red" }}>
-                      {terrain.forSale ? "Sí" : "No"}
-                    </span>
+                    <span style={{ fontWeight: "bold" }}>Tipo de Suelo:</span>{" "}
+                    {terrain.soilType}
                   </Typography>
                   <Typography>
                     <span style={{ fontWeight: "bold" }}>Ubicación:</span>{" "}
                     {terrain.location}
                   </Typography>
-                  <Typography>
-                    <span style={{ fontWeight: "bold" }}>
-                      Fecha de cosecha:
-                    </span>{" "}
-                    {terrain?.remainingDays &&
-                      terrain.remainingDays.split("-").reverse().join("/")}
-                  </Typography>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      component={Link}
+                      to={"/add/crops"}
+                      startIcon={<AddIcon />}
+                    >
+                      Agregar Cultivos
+                    </Button>
+                  </Box>
                   <Box
                     sx={{
                       position: "absolute",
