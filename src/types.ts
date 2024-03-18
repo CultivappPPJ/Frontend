@@ -41,12 +41,9 @@ export interface TerrainResponse {
   area: string
   soilType: string
   photo: string
-  email: string
-  remainingDays: string
-  forSale: boolean
-  fullName: string
-  seedTypes: SeedType[]
   location: string
+  email: string
+  fullName: string
 }
 
 export interface SeedType {
