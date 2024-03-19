@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import {
   Button,
@@ -34,6 +34,8 @@ export default function AddCrops() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [seedType, setSeedType] = useState<SeedType[]>([]);
+  const fileInputRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -51,9 +53,35 @@ export default function AddCrops() {
     };
 
   const onSubmit: SubmitHandler<IFormCrop> = async (data) => {
+    setIsSubmitting(true);
+    let imageUrl = "";
+
+    if (data.photo) {
+      const formData = new FormData();
+      formData.append("file", data.photo);
+      formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+      formData.append("cloud_name", import.meta.env.VITE_CLOUD_NAME);
+
+      try {
+        const uploadResponse = await axios.post(
+          `https://api.cloudinary.com/v1_1/${
+            import.meta.env.VITE_CLOUD_NAME
+          }/image/upload`,
+          formData
+        );
+        imageUrl = uploadResponse.data.secure_url;
+      } catch (error) {
+        console.error("Error al cargar la imagen a Cloudinary:", error);
+        setSnackbarMessage("Error al cargar la imagen");
+        setSnackbarOpen(true);
+        return;
+      }
+    }
+
     const terrainData = {
       ...data,
       terrainId: id,
+      photo: imageUrl,
     };
 
     try {
@@ -76,8 +104,13 @@ export default function AddCrops() {
         harvestDate: "",
         forSale: true,
       });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Ocurrió un error al agregar un cultivo: ", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -200,17 +233,26 @@ export default function AddCrops() {
                 name="photo"
                 control={control}
                 defaultValue=""
-                rules={{ required: "URL de la imagen es requerido" }}
-                render={({ field, fieldState: { error } }) => (
+                rules={{ required: "La imagen es requerida" }}
+                render={({
+                  field: { onChange, onBlur, name },
+                  fieldState: { error },
+                }) => (
                   <TextField
-                    {...field}
-                    margin="normal"
-                    required
+                    onBlur={onBlur}
+                    onChange={(e) => onChange(e.target.files[0])}
+                    inputRef={fileInputRef}
+                    name={name}
+                    type="file"
+                    error={!!error}
+                    helperText={error ? error.message : null}
                     variant="outlined"
                     fullWidth
-                    label="URL de la imagen"
-                    error={!!error}
-                    helperText={error ? error.message : ""}
+                    margin="normal"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    label="Cargar imagen"
                   />
                 )}
               />
@@ -300,8 +342,9 @@ export default function AddCrops() {
                 color="primary"
                 size="large"
                 startIcon={<AddIcon />}
+                disabled={isSubmitting}
               >
-                Agregar
+                {isSubmitting ? "Agregando..." : "Agregar"}
               </Button>
             </Box>
           </Grid>

@@ -64,14 +64,11 @@ export interface SeedType {
 export interface IFormInput {
   name: string;
   area: number;
-  seedTypeIds: number[];
-  photo: string;
-  email: string;
-  remainingDays: string;
-  forSale: boolean;
-  fullName: string;
   soilType: "Arenoso" | "Mixto" | "Ácido" | "Calizo" | "Supresivo";
+  photo: string;
   location: string;
+  email: string;
+  fullName: string;
 }
 
 export interface IFormCrop{
