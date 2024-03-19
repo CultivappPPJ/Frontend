@@ -31,7 +31,7 @@ const TerrainCard: React.FC<TerrainCardProps> = ({ terrain, onCardClick }) => {
             className="img"
           />
           <Typography>
-            <span>Área de cultivo:</span> {terrain.area} en hectáreas
+            <span>Área de cultivo:</span> {terrain.area} hectáreas
           </Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             <Typography>
