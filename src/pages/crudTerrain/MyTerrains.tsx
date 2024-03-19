@@ -212,7 +212,7 @@ export default function MyTerrains() {
                       variant="contained"
                       color="primary"
                       component={Link}
-                      to={"/add/crops"}
+                      to={`/add/crops/${terrain.id}`}
                       startIcon={<AddIcon />}
                     >
                       Agregar Cultivos
@@ -229,16 +229,15 @@ export default function MyTerrains() {
                     }}
                   >
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       color="warning"
-                      sx={{ color: "white" }}
                       component={Link}
                       to={`/update/${terrain.id}`}
                     >
                       Editar
                     </Button>
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       color="error"
                       onClick={() => handleClickOpen(terrain.id, terrain.name)}
                       startIcon={<DeleteIcon />}
