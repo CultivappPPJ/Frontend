@@ -41,12 +41,7 @@ export default function InfoTerrain() {
     const fetchTerrainData = async () => {
       try {
         const response = await axios.get<TerrainResponse>(
-          `${import.meta.env.VITE_TERRAIN}/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          `${import.meta.env.VITE_TERRAIN}/${id}`
         );
         setTerrain(response.data);
       } catch (error) {
