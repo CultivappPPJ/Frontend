@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { jwtDecode } from "jwt-decode";
 import AddIcon from "@mui/icons-material/Add";
+import SearchIcon from "@mui/icons-material/Search";
 
 export default function MyTerrains() {
   const [terrains, setTerrains] = useState<TerrainResponse[]>([]);
@@ -171,9 +172,9 @@ export default function MyTerrains() {
           </Box>
         ) : (
           terrains.map((terrain) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={terrain.id}>
+            <Grid item xs={12} sm={6} md={4} key={terrain.id}>
               <Card>
-                <CardContent sx={{ minHeight: "550px", position: "relative" }}>
+                <CardContent>
                   <Typography
                     variant="h6"
                     style={{ marginBottom: "20px" }}
@@ -185,14 +186,6 @@ export default function MyTerrains() {
                     image={terrain.photo}
                     style={{ marginBottom: "20px" }}
                   />
-                  <Typography>
-                    <span style={{ fontWeight: "bold" }}>Agricultor:</span>{" "}
-                    {terrain.fullName}
-                  </Typography>
-                  <Typography>
-                    <span style={{ fontWeight: "bold" }}>Contacto:</span>{" "}
-                    {terrain.email}
-                  </Typography>
                   <Typography>
                     <span style={{ fontWeight: "bold" }}>Area de Cultivo:</span>{" "}
                     {terrain.area} hectareas
@@ -206,8 +199,23 @@ export default function MyTerrains() {
                     {terrain.location}
                   </Typography>
                   <Box
-                    sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mt: 2,
+                      flexWrap: "wrap",
+                      gap: 2,
+                    }}
                   >
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      component={Link}
+                      to={`/info/terrain/${terrain.id}`}
+                      startIcon={<SearchIcon />}
+                    >
+                      Ver Info
+                    </Button>
                     <Button
                       variant="contained"
                       color="primary"
@@ -220,12 +228,11 @@ export default function MyTerrains() {
                   </Box>
                   <Box
                     sx={{
-                      position: "absolute",
-                      bottom: "20px",
                       display: "flex",
                       justifyContent: "space-between",
-                      marginTop: "10px",
-                      width: "90%",
+                      mt: 2,
+                      flexWrap: "wrap",
+                      gap: 2,
                     }}
                   >
                     <Button

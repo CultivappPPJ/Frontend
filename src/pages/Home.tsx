@@ -3,13 +3,6 @@ import {
   Typography,
   Container,
   Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-  CardMedia,
   CircularProgress,
 } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
@@ -21,9 +14,6 @@ import { TerrainResponse } from "../types";
 
 export default function Home() {
   const [terrainsData, setTerrainsData] = useState<TerrainResponse[]>([]);
-  const [selectedTerrain, setSelectedTerrain] =
-    useState<TerrainResponse | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [paginationInfo, setPaginationInfo] = useState({
     currentPage: 0,
@@ -57,15 +47,6 @@ export default function Home() {
     newPage: number
   ) => {
     fetchData(newPage - 1);
-  };
-
-  const handleCardClick = (terrain: TerrainResponse) => {
-    setSelectedTerrain(terrain);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   return (
@@ -106,10 +87,7 @@ export default function Home() {
                 {terrainsData.map((terrain) => (
                   <Grid item key={terrain.id} xs={12} md={6} lg={4}>
                     <Card className="terrain-card">
-                      <TerrainCard
-                        terrain={terrain}
-                        onCardClick={handleCardClick}
-                      />
+                      <TerrainCard terrain={terrain} />
                     </Card>
                   </Grid>
                 ))}
@@ -125,46 +103,6 @@ export default function Home() {
                 className="pagination"
               />
             )}
-
-            {/* Modal */}
-            <Dialog open={isModalOpen} onClose={handleCloseModal}>
-              <DialogTitle className="dialog-title">{`Cultivo de ${selectedTerrain?.name}`}</DialogTitle>
-              <DialogContent sx={{ width: "500px" }}>
-                <CardMedia
-                  component="img"
-                  alt={selectedTerrain?.name}
-                  height="200px"
-                  image={selectedTerrain?.photo}
-                  className="card-media"
-                />
-                <DialogContentText>
-                  <span>Área de cultivo:</span> {selectedTerrain?.area}{" "}
-                  hectáreas
-                  <br />
-                  <span>Tipo de suelo:</span> {selectedTerrain?.soilType}
-                  <br />
-                  <span>Tipo cultivos:</span>{" "}
-                  {selectedTerrain?.crops && selectedTerrain?.crops.length > 0
-                    ? selectedTerrain?.crops
-                        .map((crop) => crop.seedType.name)
-                        .join(" - ")
-                    : "Sin Cultivos"}
-                  <br />
-                  <br />
-                  <span>Nombre del agricultor:</span>{" "}
-                  {selectedTerrain?.fullName}
-                  <br />
-                  <span>Email de contacto:</span> {selectedTerrain?.email}
-                  <br />
-                  <span>Ubicación:</span> {selectedTerrain?.location}
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions className="dialog-actions">
-                <Button onClick={handleCloseModal} color="error">
-                  Cerrar
-                </Button>
-              </DialogActions>
-            </Dialog>
           </>
         )}
       </Container>
