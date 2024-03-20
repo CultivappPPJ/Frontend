@@ -19,7 +19,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { jwtDecode } from "jwt-decode";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -237,8 +237,8 @@ export default function MyTerrains() {
                     }}
                   >
                     <Button
-                      sx={{ backgroundColor: "#f57c00", color: "white" }} 
                       variant="outlined"
+                      color="warning"
                       component={Link}
                       to={`/update/${terrain.id}`}
                       startIcon={<EditIcon />}

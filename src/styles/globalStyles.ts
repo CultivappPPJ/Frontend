@@ -14,7 +14,7 @@ export const theme = createTheme({
         main: "#19857b",
       },
       warning: {
-        main: "#ffab40"
+        main: "#f57c00"
       }
     },
   });
