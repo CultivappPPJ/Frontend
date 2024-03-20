@@ -12,6 +12,7 @@ import Layout from "./pages/Layout";
 import EditTerrain from "./pages/crudTerrain/EditTerrain";
 import Landing from "./pages/Landing";
 import AddCrops from "./pages/crudTerrain/AddCrops";
+import InfoTerrain from "./pages/crudTerrain/InfoTerrain";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function App() {
           <Route path="/my/terrain" element={<MyTerrains />} />
           <Route path="/update/:id" element={<EditTerrain />} />
           <Route path="/add/crops/:id" element={<AddCrops />} />
+          <Route path="/info/terrain/:id" element={<InfoTerrain />} />
         </Route>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />

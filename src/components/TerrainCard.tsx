@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,13 +9,26 @@ import {
 } from "@mui/material";
 import "../styles/styles.css";
 import { TerrainResponse } from "../types";
-import EmailIcon from "@mui/icons-material/Email";
+import { Link } from "react-router-dom";
+import ImageModal from "./ImageModal";
 
 interface TerrainCardProps {
   terrain: TerrainResponse;
 }
 
-const TerrainCard: React.FC<TerrainCardProps> = ({ terrain, onCardClick }) => {
+const TerrainCard: React.FC<TerrainCardProps> = ({ terrain }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const handleClickOpen = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <>
       <Card>
@@ -29,38 +42,52 @@ const TerrainCard: React.FC<TerrainCardProps> = ({ terrain, onCardClick }) => {
             alt={terrain.name}
             image={terrain.photo}
             className="img"
+            onClick={() => handleClickOpen(terrain.photo)}
           />
           <Typography>
-            <span>Área de cultivo:</span> {terrain.area} hectáreas
+            <span>Área de cultivo:</span> {terrain.area}{" "}
+            {terrain.area === "1" ? "Hectárea" : "Hectáreas"}
           </Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <Typography>
-              <span>Contacto: </span>
-            </Typography>
+          <Typography component="div">
+            <strong>Cultivos:</strong>
+            {terrain.crops.length > 0 ? (
+              terrain.crops.map((crop, index) => (
+                <Typography
+                  component="span"
+                  key={index}
+                  style={{ fontWeight: "normal" }}
+                >
+                  {index > 0 ? " - " : " "}
+                  {crop.seedType.name}
+                </Typography>
+              ))
+            ) : (
+              <Typography component="span" style={{ fontWeight: "normal" }}>
+                {" "}
+                No hay cultivos
+              </Typography>
+            )}
+          </Typography>
+          <Typography>
+            <span>Ubicación:</span> {terrain.location}
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <Button
-              startIcon={<EmailIcon />}
-              href={`mailto:${terrain.email}?subject=${encodeURIComponent(
-                `Consulta sobre el terreno "${terrain.name}"`
-              )}&body=${encodeURIComponent(
-                `Buenos días señor/a ${terrain.fullName}, quiero cotizar los cultivos del terreno "${terrain.name}".`
-              )}`}
-              variant="text"
-              color="primary"
-              className="email-button"
+              component={Link}
+              to={`/info/terrain/${terrain.id}`}
+              variant="contained"
+              size="small"
             >
-              Enviar Correo
+              Más información
             </Button>
           </Box>
-          <Button
-            onClick={() => onCardClick(terrain)}
-            variant="contained"
-            size="small"
-            className="info-button"
-          >
-            Más información
-          </Button>
         </CardContent>
       </Card>
+      <ImageModal
+        open={openDialog}
+        onClose={handleClose}
+        imageUrl={selectedImage}
+      />
     </>
   );
 };
