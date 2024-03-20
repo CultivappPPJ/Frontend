@@ -39,7 +39,7 @@ export default function Home() {
       const data = response.data;
       setTerrainsData(data.content); // Actualizar el estado con los datos obtenidos de la API
       setPaginationInfo({
-        currentPage: response.data?.pageNumber + 1,
+        currentPage: response.data?.pageable?.pageNumber + 1,
         totalPages: response.data?.totalPages,
       });
       setLoading(false);
@@ -129,7 +129,7 @@ export default function Home() {
             {/* Modal */}
             <Dialog open={isModalOpen} onClose={handleCloseModal}>
               <DialogTitle className="dialog-title">{`Cultivo de ${selectedTerrain?.name}`}</DialogTitle>
-              <DialogContent>
+              <DialogContent sx={{ width: "500px" }}>
                 <CardMedia
                   component="img"
                   alt={selectedTerrain?.name}
@@ -143,17 +143,12 @@ export default function Home() {
                   <br />
                   <span>Tipo de suelo:</span> {selectedTerrain?.soilType}
                   <br />
-                  <span>Fecha de la cosecha:</span>{" "}
-                  {selectedTerrain?.remainingDays &&
-                    selectedTerrain.remainingDays
-                      .split("-")
-                      .reverse()
-                      .join("/")}
-                  <br />
                   <span>Tipo cultivos:</span>{" "}
-                  {selectedTerrain?.seedTypes
-                    .map((seed) => seed.name)
-                    .join(" - ")}
+                  {selectedTerrain?.crops && selectedTerrain?.crops.length > 0
+                    ? selectedTerrain?.crops
+                        .map((crop) => crop.seedType.name)
+                        .join(" - ")
+                    : "Sin Cultivos"}
                   <br />
                   <br />
                   <span>Nombre del agricultor:</span>{" "}

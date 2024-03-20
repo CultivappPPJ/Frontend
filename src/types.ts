@@ -41,12 +41,19 @@ export interface TerrainResponse {
   area: string
   soilType: string
   photo: string
-  email: string
-  remainingDays: string
-  forSale: boolean
-  fullName: string
-  seedTypes: SeedType[]
   location: string
+  email: string
+  fullName: string
+  crops: Crop[]
+}
+
+export interface Crop {
+  id: number
+  seedType: SeedType
+  area: string
+  photo: string
+  harvestDate: string
+  forSale: boolean
 }
 
 export interface SeedType {
@@ -57,12 +64,18 @@ export interface SeedType {
 export interface IFormInput {
   name: string;
   area: number;
-  seedTypeIds: number[];
-  photo: string;
-  email: string;
-  remainingDays: string;
-  forSale: boolean;
-  fullName: string;
   soilType: "Arenoso" | "Mixto" | "Ácido" | "Calizo" | "Supresivo";
+  photo: string;
   location: string;
+  email: string;
+  fullName: string;
+}
+
+export interface IFormCrop{
+  seedTypeId: number;
+  area: number;
+  photo: string;
+  harvestDate: string;
+  forSale: boolean;
+  terrainId: number;
 }

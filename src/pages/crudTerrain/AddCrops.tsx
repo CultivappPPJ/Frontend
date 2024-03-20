@@ -11,36 +11,39 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import axios from "axios";
-import { IFormInput, TokenPayload } from "../../types";
-import { useNavigate } from "react-router";
+import { IFormCrop, SeedType } from "../../types";
+import { useNavigate, useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 
-export default function CrudTerrain() {
-  const { handleSubmit, reset, control } = useForm<IFormInput>();
+export default function AddCrops() {
+  const { id } = useParams();
+  const { handleSubmit, reset, control } = useForm<IFormCrop>();
   const navigate = useNavigate();
   const { token, status } = useSelector((state: RootState) => state.auth);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [fullName, setFullName] = useState<string | null>(null);
+  const [seedType, setSeedType] = useState<SeedType[]>([]);
   const fileInputRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLettersInput =
-    (onChange: (value: string) => void) =>
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const onlyLetters = e.target.value.replace(/[^a-zA-Z]/g, "");
-      if (onlyLetters.length <= 14) {
-        onChange(onlyLetters);
-      }
-    };
+  const getCurrentDate = () => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const handleNumericInput =
     (onChange: (value: string) => void) =>
@@ -49,7 +52,7 @@ export default function CrudTerrain() {
       onChange(onlyNums);
     };
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+  const onSubmit: SubmitHandler<IFormCrop> = async (data) => {
     setIsSubmitting(true);
     let imageUrl = "";
 
@@ -77,14 +80,13 @@ export default function CrudTerrain() {
 
     const terrainData = {
       ...data,
-      email: userEmail,
-      fullName: fullName,
+      terrainId: id,
       photo: imageUrl,
     };
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_CREATE}`,
+        `${import.meta.env.VITE_ADD_CROPS}`,
         terrainData,
         {
           headers: {
@@ -95,29 +97,34 @@ export default function CrudTerrain() {
       console.log(response);
       setSnackbarMessage("Agregado con éxito");
       setSnackbarOpen(true);
-      reset();
+      reset({
+        seedTypeId: "",
+        area: 1,
+        photo: "",
+        harvestDate: "",
+        forSale: true,
+      });
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
     } catch (error) {
-      console.error("Ocurrió un error al agregar el terreno: ", error);
-      setSnackbarMessage("Error al agregar el terreno");
-      setSnackbarOpen(true);
+      console.error("Ocurrió un error al agregar un cultivo: ", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   useEffect(() => {
-    if (token) {
-      try {
-        const decoded = jwtDecode<TokenPayload>(token);
-        setUserEmail(decoded.sub);
-        setFullName(decoded.firstName + " " + decoded.lastName);
-      } catch (error) {
-        console.error("Error decoding token:", error);
-      }
-    }
+    axios
+      .get("http://localhost:8080/api/seed-types", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setSeedType(response.data);
+      })
+      .catch((error) => console.error("There was an error!", error));
   }, [token]);
 
   useEffect(() => {
@@ -154,7 +161,7 @@ export default function CrudTerrain() {
         }}
       >
         <Typography variant="h5" align="left" sx={{ mb: 2 }}>
-          Agregar Terreno
+          Agregar Cultivo
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Grid
@@ -166,34 +173,26 @@ export default function CrudTerrain() {
           >
             <Grid item xs={12}>
               <Controller
-                name="name"
+                name="seedTypeId"
                 control={control}
-                defaultValue=""
-                rules={{
-                  required: "Nombre es requerido",
-                  minLength: {
-                    value: 3,
-                    message: "El nombre debe tener al menos 3 caracteres.",
-                  },
-                }}
-                render={({
-                  field: { onChange, value },
-                  fieldState: { error },
-                }) => (
+                defaultValue={""}
+                rules={{ required: "El tipo de semilla es obligatorio" }}
+                render={({ field, fieldState: { error } }) => (
                   <TextField
-                    required
+                    {...field}
+                    select
+                    label="Tipo de Semilla"
                     fullWidth
-                    label="Nombre del terreno"
-                    autoComplete="given-name"
-                    autoFocus
+                    margin="normal"
                     error={!!error}
                     helperText={error ? error.message : ""}
-                    value={value}
-                    onChange={handleLettersInput(onChange)}
-                    inputProps={{
-                      maxLength: 14,
-                    }}
-                  />
+                  >
+                    {seedType.map((type) => (
+                      <MenuItem key={type.id} value={type.id}>
+                        {type.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 )}
               />
               <Controller
@@ -231,34 +230,10 @@ export default function CrudTerrain() {
                 )}
               />
               <Controller
-                name="soilType"
-                control={control}
-                defaultValue="Mixto"
-                rules={{ required: "Este campo es obligatorio" }}
-                render={({ field, fieldState: { error } }) => (
-                  <TextField
-                    {...field}
-                    select
-                    margin="normal"
-                    variant="outlined"
-                    fullWidth
-                    label="Tipo de Suelo"
-                    error={!!error}
-                    helperText={error ? error.message : null}
-                  >
-                    <MenuItem value="Mixto">Mixto</MenuItem>
-                    <MenuItem value="Arenoso">Arenoso</MenuItem>
-                    <MenuItem value="Ácido">Ácido</MenuItem>
-                    <MenuItem value="Calizo">Calizo</MenuItem>
-                    <MenuItem value="Supresivo">Supresivo</MenuItem>
-                  </TextField>
-                )}
-              />
-              <Controller
                 name="photo"
                 control={control}
                 defaultValue=""
-                rules={{ required: "La imagen es obligatoria" }}
+                rules={{ required: "La imagen es requerida" }}
                 render={({
                   field: { onChange, onBlur, name },
                   fieldState: { error },
@@ -282,21 +257,63 @@ export default function CrudTerrain() {
                 )}
               />
               <Controller
-                name="location"
+                name="harvestDate"
                 control={control}
-                defaultValue=""
-                rules={{ required: "Ubicación es requerido" }}
+                rules={{
+                  required: "Este campo es obligatorio",
+                  validate: {
+                    isFutureDate: (value) =>
+                      value >= getCurrentDate() ||
+                      "La fecha de cosecha no puede ser un día anterior a la fecha actual.",
+                  },
+                }}
                 render={({ field, fieldState: { error } }) => (
                   <TextField
                     {...field}
+                    type="date"
                     margin="normal"
-                    required
                     variant="outlined"
                     fullWidth
-                    label="Ubicación del terreno"
+                    label="Fecha de cosecha"
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                     error={!!error}
-                    helperText={error ? error.message : ""}
+                    helperText={error ? error.message : null}
                   />
+                )}
+              />
+              <Controller
+                name="forSale"
+                control={control}
+                defaultValue={true}
+                render={({ field }) => (
+                  <FormControl component="fieldset" margin="normal">
+                    <FormLabel component="legend">
+                      Disponible para la Venta
+                    </FormLabel>
+                    <RadioGroup
+                      {...field}
+                      row
+                      aria-label="forSale"
+                      name="row-radio-buttons-group"
+                      value={field.value ? "true" : "false"}
+                      onChange={(e) =>
+                        field.onChange(e.target.value === "true")
+                      }
+                    >
+                      <FormControlLabel
+                        value="true"
+                        control={<Radio />}
+                        label="Sí"
+                      />
+                      <FormControlLabel
+                        value="false"
+                        control={<Radio />}
+                        label="No"
+                      />
+                    </RadioGroup>
+                  </FormControl>
                 )}
               />
             </Grid>
@@ -311,7 +328,7 @@ export default function CrudTerrain() {
             >
               <Button
                 component={Link}
-                to="/"
+                to="/my/terrain"
                 variant="text"
                 color="error"
                 size="large"
