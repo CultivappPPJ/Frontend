@@ -37,7 +37,7 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({
       </Box>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          ¿Estás seguro de que quieres eliminar el terreno "{terrainName}"?
+          ¿Estás seguro de que quieres eliminar "{terrainName}"?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
