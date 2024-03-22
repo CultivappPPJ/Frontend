@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import {
   Box,
@@ -18,7 +18,10 @@ import {
 import { TerrainResponse, TokenPayload } from "../../types";
 import { jwtDecode } from "jwt-decode";
 import EmailIcon from "@mui/icons-material/Email";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import ImageModal from "../../components/ImageModal";
+import ModalDelete from "../../components/ModalDelete";
 
 export default function InfoTerrain() {
   const { id } = useParams();
@@ -26,9 +29,22 @@ export default function InfoTerrain() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const { token } = useSelector((state: RootState) => state.auth);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDialogDelete, setOpenDialogDelete] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const [selectedCropId, setSelectedCropId] = useState<number | null>(null);
+  const [selectedCropName, setSelectedCropName] = useState<string>("");
 
-  const handleClickOpen = (imageUrl) => {
+  const handleClickOpenDelete = (cropId: number, cropName: string) => {
+    setOpenDialogDelete(true);
+    setSelectedCropId(cropId);
+    setSelectedCropName(cropName);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDialogDelete(false);
+  };
+
+  const handleClickOpen = (imageUrl: string) => {
     setSelectedImage(imageUrl);
     setOpenDialog(true);
   };
@@ -37,20 +53,37 @@ export default function InfoTerrain() {
     setOpenDialog(false);
   };
 
-  useEffect(() => {
-    const fetchTerrainData = async () => {
-      try {
-        const response = await axios.get<TerrainResponse>(
-          `${import.meta.env.VITE_TERRAIN}/${id}`
-        );
-        setTerrain(response.data);
-      } catch (error) {
-        console.error("Error al cargar los datos del terreno:", error);
-      }
-    };
+  const fetchTerrainData = async () => {
+    try {
+      const response = await axios.get<TerrainResponse>(
+        `${import.meta.env.VITE_TERRAIN}/${id}`
+      );
+      setTerrain(response.data);
+    } catch (error) {
+      console.error("Error al cargar los datos del terreno:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchTerrainData();
   }, [id]);
+
+  const handleDelete = async () => {
+    if (!selectedCropId) return;
+    const deleteUrl = `${import.meta.env.VITE_DELETE_CROP}/${selectedCropId}`;
+
+    try {
+      await axios.delete(deleteUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setOpenDialogDelete(false);
+      fetchTerrainData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (token) {
@@ -178,12 +211,25 @@ export default function InfoTerrain() {
                     sx={{ mt: 2 }}
                   >
                     <Grid item>
-                      <Button variant="outlined" color="warning">
+                      <Button
+                        component={Link}
+                        to={`/update/crop/${crop.id}`}
+                        variant="outlined"
+                        color="warning"
+                        startIcon={<EditIcon />}
+                      >
                         Editar
                       </Button>
                     </Grid>
                     <Grid item>
-                      <Button variant="outlined" color="error">
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() =>
+                          handleClickOpenDelete(crop.id, crop.seedType.name)
+                        }
+                        startIcon={<DeleteIcon />}
+                      >
                         Eliminar
                       </Button>
                     </Grid>
@@ -198,6 +244,12 @@ export default function InfoTerrain() {
         open={openDialog}
         onClose={handleClose}
         imageUrl={selectedImage}
+      />
+      <ModalDelete
+        openDialog={openDialogDelete}
+        handleClose={handleCloseDelete}
+        handleDelete={handleDelete}
+        terrainName={selectedCropName}
       />
     </Container>
   );
