@@ -27,7 +27,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Link } from "react-router-dom";
 
 export default function AddCrops() {
-  const { id } = useParams();
+  const { id, area: terrainArea } = useParams();
   const { handleSubmit, reset, control } = useForm<IFormCrop>();
   const navigate = useNavigate();
   const { token, status } = useSelector((state: RootState) => state.auth);
@@ -206,8 +206,8 @@ export default function AddCrops() {
                     message: "El valor debe ser un número positivo",
                   },
                   max: {
-                    value: 50,
-                    message: "El valor debe ser menor o igual a 50",
+                    value: parseInt(terrainArea || "0"),
+                    message: `El valor debe ser menor o igual al área disponible del terreno (${terrainArea})`,
                   },
                 }}
                 render={({

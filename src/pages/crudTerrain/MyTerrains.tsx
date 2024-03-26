@@ -189,7 +189,7 @@ export default function MyTerrains() {
                   />
                   <Typography>
                     <span style={{ fontWeight: "bold" }}>Area de Cultivo:</span>{" "}
-                    {terrain.area} hectareas
+                    {terrain.area} hectáreas
                   </Typography>
                   <Typography>
                     <span style={{ fontWeight: "bold" }}>Tipo de Suelo:</span>{" "}
@@ -221,7 +221,7 @@ export default function MyTerrains() {
                       variant="contained"
                       color="primary"
                       component={Link}
-                      to={`/add/crops/${terrain.id}`}
+                      to={`/add/crops/${terrain.id}/${terrain.area}`}
                       startIcon={<AddIcon />}
                     >
                       Agregar Cultivos

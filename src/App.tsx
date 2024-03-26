@@ -34,7 +34,7 @@ function App() {
           <Route path="/crud" element={<CrudTerrain />} />
           <Route path="/my/terrain" element={<MyTerrains />} />
           <Route path="/update/:id" element={<EditTerrain />} />
-          <Route path="/add/crops/:id" element={<AddCrops />} />
+          <Route path="/add/crops/:id/:area" element={<AddCrops />} />
           <Route path="/info/terrain/:id" element={<InfoTerrain />} />
           <Route path="/update/crop/:id" element={<EditCrop />} />
         </Route>
